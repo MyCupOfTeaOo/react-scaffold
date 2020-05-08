@@ -43,6 +43,7 @@ $item-h: 40px;
 }
 
 .toolbar {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   padding: $tiny-padding 0 $small-padding 0;

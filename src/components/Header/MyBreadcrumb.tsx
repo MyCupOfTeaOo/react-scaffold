@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import { GRoute, Location } from '@/typings';
 import pathToRegexp from 'path-to-regexp';
-import { Breadcrumb, Icon } from 'antd';
+import { Breadcrumb } from 'antd';
+import { HomeOutlined } from '@ant-design/icons';
 import { router } from 'umi';
 import styles from './Breadcrumb.scss';
 
@@ -109,7 +110,7 @@ const MyBreadcrumb: React.FC<BreadcrumbProps> = props => {
               })
             }
           >
-            <Icon type="home" />
+            <HomeOutlined />
           </a>
         ) : breadCrumbMap.notLink ? (
           <span>{breadCrumbMap.name}</span>

@@ -243,15 +243,6 @@ html {
       padding: $tiny-padding;
     }
     $input-height: 28px;
-    .ant-input {
-      height: $input-height !important;
-    }
-    .ant-select-selection--single {
-      height: $input-height !important;
-    }
-    .ant-select-selection__rendered {
-      line-height: $input-height - 2px;
-    }
     button {
       margin-top: 4px;
     }

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { ConfigProvider, Spin } from 'antd';
+import { ConfigProvider, Spin, Modal } from 'antd';
 import { Provider, observer } from 'mobx-react';
 import DataGridRegister from 'teaness/es/DataGrid/DataGridRegister';
 import zhCN from 'antd/es/locale/zh_CN';
@@ -7,7 +7,7 @@ import defaultLocale from 'antd/es/locale/default';
 import router from 'umi/router';
 import { Registry as UploadRegistry } from 'teaness/es/Form/Components/Upload';
 import { Base64 } from 'js-base64';
-import { PictureView, Modal, BaseGrid } from 'teaness';
+import { PictureView, BaseGrid } from 'teaness';
 import { RequestData, ResponseData } from 'teaness/es/DataGrid/typings';
 import { CancellablePromise } from 'teaness/es/typings';
 import stores from '@/stores';
@@ -19,7 +19,14 @@ import { respCode } from '@/constant';
 import styles from './index.scss';
 import { apiPrefix } from '#/projectConfig';
 
-zhCN.Modal.justOkText = '确定';
+if (zhCN.Modal) {
+  zhCN.Modal.justOkText = '确定';
+}
+
+Modal.defaultProps = {
+  ...Modal.defaultProps,
+  centered: true,
+} as any;
 // fix show english
 Object.assign(defaultLocale, zhCN);
 function dataGridRequest<T>(url: string, payload: RequestData<T>) {
@@ -60,6 +67,8 @@ function dataGridRequest<T>(url: string, payload: RequestData<T>) {
 
 BaseGrid.defaultProps = {
   ...BaseGrid.defaultProps,
+  headerHeight: 32,
+  rowHeight: 32,
   noRowsOverlayComponentFramework: () => <span>暂无数据</span>,
 };
 DataGridRegister.request = dataGridRequest;

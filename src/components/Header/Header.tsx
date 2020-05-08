@@ -1,5 +1,6 @@
 import React from 'react';
-import { Layout, Icon } from 'antd';
+import { Layout } from 'antd';
+import { LogoutOutlined } from '@ant-design/icons';
 import router from 'umi/router';
 import { inject, observer } from 'mobx-react';
 import { Link } from 'umi';
@@ -36,7 +37,7 @@ const Header: React.FC<HeaderProps> = ({ clearUser, logo }) => {
             router.push('/sign/signIn');
           }}
         >
-          <Icon type="logout" />
+          <LogoutOutlined />
           <span>退出登录</span>
         </div>
       </div>

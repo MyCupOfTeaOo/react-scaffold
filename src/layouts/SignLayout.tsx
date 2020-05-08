@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon } from 'antd';
+import { CopyrightCircleOutlined } from '@ant-design/icons';
 import { GlobalFooter } from 'teaness';
 import { Redirect } from 'umi';
 import { RouteProps } from '@/typings';
@@ -10,7 +10,7 @@ import { copyright, projectName } from '#/projectConfig';
 const Copyright: React.FC<{ text?: string }> = ({ text }) => (
   <React.Fragment>
     <div style={{ color: 'white' }}>
-      Copyright <Icon type="copyright" /> {text}
+      Copyright <CopyrightCircleOutlined /> {text}
     </div>
   </React.Fragment>
 );

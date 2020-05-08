@@ -4,9 +4,9 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from 'react';
-import { Spin, message, Input } from 'antd';
-import { useForm, Modal, useStore, Select } from 'teaness';
-import { respCode, verticalColProps } from '@/constant';
+import { Spin, message, Input, Modal } from 'antd';
+import { useForm, useStore, Select, vertical } from 'teaness';
+import { respCode } from '@/constant';
 import {
   getCommonDict,
   newCommonDict,
@@ -128,15 +128,7 @@ const Info: React.ForwardRefRenderFunction<any, InfoProps> = (props, ref) => {
   return (
     <div className={styles.normal}>
       <Spin spinning={loading}>
-        <Form
-          layout={{
-            ...verticalColProps,
-            style: {
-              maxWidth: 500,
-              margin: '0 auto',
-            },
-          }}
-        >
+        <Form layout={vertical}>
           <Item id="dictType" required text="类型">
             <Select requestMethod={loadDictType} disabled={!!props.id} />
           </Item>

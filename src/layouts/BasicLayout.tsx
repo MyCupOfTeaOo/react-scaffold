@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Spin, Layout } from 'antd';
+import { Spin, Layout, Modal } from 'antd';
 
 import Redirect from 'umi/redirect';
 import { inject, observer } from 'mobx-react';
-import { Modal } from 'teaness';
 import { getMenuData } from '@/service/permission';
 import { respCode } from '@/constant';
 import pages from '@/pages/.pages';
@@ -34,7 +33,6 @@ const BasicLayout: React.FC<RouteProps & {
     if (!getToken()) return;
     getMenuData()
       .then(resp => {
-        console.log(resp)
         if (resp.code === respCode.success) {
           if (window.g_routes[rootIndex]?.routes?.[index]?.routes) {
             const [routes, menuId2Url] = GenRoutes(resp.data, pages);
@@ -103,7 +101,6 @@ const BasicLayout: React.FC<RouteProps & {
       </Spin>
     );
   }
-  console.log(routes)
   return (
     <Layout className={styles.normal}>
       <Header

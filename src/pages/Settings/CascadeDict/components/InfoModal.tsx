@@ -5,10 +5,10 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from 'react';
-import { Spin, message, Alert, Input } from 'antd';
-import { useForm, Modal, useStore, Select, Cascader } from 'teaness';
+import { Spin, message, Alert, Input, Modal } from 'antd';
+import { useForm, useStore, Select, Cascader, vertical } from 'teaness';
 import { InputProps } from 'antd/lib/input';
-import { respCode, verticalColProps } from '@/constant';
+import { respCode } from '@/constant';
 import { loadCascadeType } from '@/combination';
 import {
   loadChildDict,
@@ -193,15 +193,7 @@ const Info: React.ForwardRefRenderFunction<any, InfoProps> = (props, ref) => {
   return (
     <div className={styles.normal}>
       <Spin spinning={loading}>
-        <Form
-          layout={{
-            ...verticalColProps,
-            style: {
-              maxWidth: 500,
-              margin: '0 auto',
-            },
-          }}
-        >
+        <Form layout={vertical}>
           <Item text="类型" id="dictType">
             <Select requestMethod={loadCascadeType} disabled={!!props.id} />
           </Item>

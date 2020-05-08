@@ -1,8 +1,9 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react';
 import router from 'umi/router';
-import { Input, Icon, Row, Col, Button, Alert } from 'antd';
+import { Input, Row, Col, Button, Alert, Modal } from 'antd';
+import Icon, { UserOutlined, LockOutlined } from '@ant-design/icons';
 import Redirect from 'umi/redirect';
-import { useForm, useStore, Label, Modal } from 'teaness';
+import { useForm, useStore, Label } from 'teaness';
 import { inject } from 'mobx-react';
 import { Link } from 'umi';
 import { getGuestUid, fakeAccountLogin } from '@/service/login';
@@ -156,50 +157,31 @@ function SignIn(props: SignInProps) {
           />
         )}
         <div className={styles.form}>
-          <Form>
-            <Item
-              showErrorProps={{
-                isToolTip: false,
-              }}
-              id="username"
-              childrenStyle={{
-                paddingTop: 12,
-                paddingBottom: 12,
-              }}
-            >
+          <Form
+            layout={{
+              label: {
+                childrenStyle: {
+                  width: '100%',
+                },
+              },
+            }}
+          >
+            <Item id="username">
               <Input
                 placeholder="账户"
                 size="large"
-                prefix={<Icon type="user" className={styles.prefixIcon} />}
+                prefix={<UserOutlined />}
               />
             </Item>
-            <Item
-              id="password"
-              showErrorProps={{
-                isToolTip: false,
-              }}
-              childrenStyle={{
-                paddingTop: 12,
-                paddingBottom: 12,
-              }}
-            >
+            <Item id="password">
               <Input
                 placeholder="密码"
                 type="password"
                 size="large"
-                prefix={<Icon type="lock" className={styles.prefixIcon} />}
+                prefix={<LockOutlined />}
               />
             </Item>
-            <Item
-              showErrorProps={{
-                isToolTip: false,
-              }}
-              id="captcha"
-              childrenStyle={{
-                paddingTop: 12,
-                paddingBottom: 12,
-              }}
-            >
+            <Item id="captcha">
               {params => (
                 <Row gutter={8}>
                   <Col span={16}>

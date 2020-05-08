@@ -1,23 +1,25 @@
 import React, { memo, useMemo, useState, useRef } from 'react';
-import { Button, message, Badge, Input } from 'antd';
-import { Select, useForm, DataGrid, Modal, useStore, Col } from 'teaness';
-import { getLocationGridInit, DataGridRef } from 'teaness/es/DataGrid/DataGrid';
+import { Button, message, Badge, Input, Modal } from 'antd';
+import {
+  Select,
+  useForm,
+  DataGrid,
+  useStore,
+  Col,
+  useDataGrid,
+  horizontal,
+} from 'teaness';
 import { FormConfigs } from 'teaness/es/Form/typings';
 import { inject } from 'mobx-react';
 import { ColumnDefs } from 'teaness/es/DataGrid/typings';
 import { RouteProps } from '@/typings';
-import {
-  horizontalColProps,
-  respCode,
-  enableState,
-  enableOptions,
-} from '@/constant';
+import { respCode, enableState, enableOptions } from '@/constant';
 import { MenuId2Url } from '@/stores/Global';
 import { switchCascadeDict } from '@/service/config';
 import { loadCascadeType } from '@/combination';
 import Info, { InfoRef } from './components/InfoModal';
 
-export interface UserManagerProps extends RouteProps {
+export interface CascadeDictProps extends RouteProps {
   menuId2Url: MenuId2Url;
 }
 
@@ -28,33 +30,29 @@ type FormType = Partial<{
   dictState: number;
 }>;
 
-const UserManager: React.FC<UserManagerProps> = props => {
-  const gridRef = useRef<DataGridRef>();
-  const defaultQueryData = useMemo(
-    () =>
-      getLocationGridInit<FormType>('queryData', {}, 'grid', props.location),
-    [],
-  );
+const CascadeDict: React.FC<CascadeDictProps> = props => {
   const [visible, setVisible] = useState(false);
   const [info, setInfo] = useState<any>({});
-  const [queryData, setQueryData] = useState(defaultQueryData);
+  const { gridProps, gridRef, setQueryData, queryDataRef } = useDataGrid({
+    location: props.location,
+    historyId: 'grid',
+  });
   const formConfigs = useMemo<FormConfigs<FormType>>(
     () => ({
       dictType: {
-        defaultValue: defaultQueryData.dictType,
+        defaultValue: queryDataRef.current?.dictType,
       },
       dictCode: {
-        defaultValue: defaultQueryData.dictCode,
+        defaultValue: queryDataRef.current?.dictCode,
       },
       dictValue: {
-        defaultValue: defaultQueryData.dictValue,
+        defaultValue: queryDataRef.current?.dictValue,
       },
       dictState: {
-        defaultValue: defaultQueryData.dictState,
+        defaultValue: queryDataRef.current?.dictState,
       },
     }),
-
-    [defaultQueryData],
+    [],
   );
 
   const store = useStore<FormType>(formConfigs);
@@ -166,7 +164,7 @@ const UserManager: React.FC<UserManagerProps> = props => {
   return (
     <div className="search-layout">
       <div className="search-area">
-        <Form layout={horizontalColProps}>
+        <Form layout={horizontal}>
           <Item id="dictType" text="类型">
             <Select requestMethod={loadCascadeType} />
           </Item>
@@ -182,7 +180,6 @@ const UserManager: React.FC<UserManagerProps> = props => {
           <Col span={24}>
             <div className="search-btns">
               <Button
-                size="small"
                 type="primary"
                 htmlType="submit"
                 onClick={e => {
@@ -191,7 +188,6 @@ const UserManager: React.FC<UserManagerProps> = props => {
                     setQueryData(values);
                     if (gridRef.current) {
                       gridRef.current.fetch({
-                        queryData: values,
                         page: 1,
                       });
                     }
@@ -201,13 +197,11 @@ const UserManager: React.FC<UserManagerProps> = props => {
                 查询
               </Button>
               <Button
-                size="small"
                 onClick={() => {
                   store.setAllValues({});
                   setQueryData({});
                   if (gridRef.current) {
                     gridRef.current.fetch({
-                      queryData: {},
                       page: 1,
                     });
                   }
@@ -216,7 +210,6 @@ const UserManager: React.FC<UserManagerProps> = props => {
                 重置
               </Button>
               <Button
-                size="small"
                 type="primary"
                 onClick={() => {
                   setVisible(true);
@@ -258,15 +251,9 @@ const UserManager: React.FC<UserManagerProps> = props => {
         <Info id={info.dictId} ref={infoRef} />
       </Modal>
       <DataGrid
-        headerHeight={32}
-        rowHeight={32}
-        ref={gridRef}
-        historyId="grid"
-        location={props.location}
         fetchUrl="/config/dict/cascade/"
         columnDefs={columnDefs}
-        queryData={queryData}
-        defaultPageSize={20}
+        {...gridProps}
       />
     </div>
   );
@@ -274,4 +261,4 @@ const UserManager: React.FC<UserManagerProps> = props => {
 
 export default inject(({ global }) => ({
   menuId2Url: global.menuId2Url,
-}))(memo(UserManager));
+}))(memo(CascadeDict));
