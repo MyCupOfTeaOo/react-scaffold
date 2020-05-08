@@ -1,0 +1,61 @@
+@import 'src/global.scss';
+
+.sign {
+  min-height: 100vh;
+  display: flex;
+  padding: 0 $padding;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-image: url('../assets/back.jpg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  .logo {
+    height: 50px;
+    margin-right: $small-padding;
+  }
+  .title {
+    font-size: 38px;
+    color: #fff;
+    line-height: 120px;
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+.normal {
+  width: 100vw;
+  height: 100vh;
+  background: #f7f7f7;
+}
+
+.sider {
+  :global(.ant-layout-sider-zero-width-trigger) {
+    background: $primary-5;
+  }
+  box-shadow: $component-shadow;
+  z-index: 9;
+}
+
+.trigger {
+  $height: 40px;
+  cursor: pointer;
+  height: $height;
+  text-align: center;
+  font-size: 18px;
+  background: $gray-4;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  &:hover {
+    background: $gray-7;
+  }
+  .text {
+    font-size: 14px;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}

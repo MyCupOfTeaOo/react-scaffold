@@ -1,0 +1,9 @@
+declare module '*.css';
+declare module '*.scss';
+declare module '*.png';
+declare module '*.jpg';
+declare module '*.svg';
+declare module '*.json';
+declare module '@ckeditor/ckeditor5-build-classic';
+declare module '@ckeditor/ckeditor5-build-decoupled-document';
+declare module '@ckeditor/ckeditor5-react';

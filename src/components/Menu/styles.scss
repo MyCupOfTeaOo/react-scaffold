@@ -1,0 +1,13 @@
+.logo {
+  height: 64px;
+  background: rgba(25, 31, 37, 0.04);
+  color: rgba(25, 31, 37, 0.72);
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+:global(.ant-menu-item-selected > a, .ant-menu-item-selected > a:hover){
+  color: #5e638d;
+}

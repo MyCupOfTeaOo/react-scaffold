@@ -1,0 +1,52 @@
+@import 'src/global.scss';
+
+$item-h: 40px;
+.prefixIcon {
+  margin-left: -4px;
+  font-size: 18px;
+  color: rgba($color: $text-color, $alpha: 0.2);
+}
+.keyBoard {
+  @extend .prefixIcon;
+  svg {
+    width: 20px;
+    height: 12px;
+  }
+}
+
+.layout {
+  width: 480px;
+  margin: 0 auto;
+  box-shadow: 5px 5px 20px $component-shadow-color;
+  padding-top: 40px;
+  background: linear-gradient(
+    179.407632981258deg,
+    rgba(255, 255, 255, 1) 1%,
+    rgba(242, 242, 242, 1) 99%
+  );
+}
+.form {
+  width: 65%;
+  max-width: 368px;
+  margin: auto;
+}
+.loginButton {
+  width: 100%;
+}
+
+.captcha {
+  height: $item-h;
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  padding: $tiny-padding 0 $small-padding 0;
+  :global(.ant-divider) {
+    background: rgba($color: $text-color, $alpha: 0.4);
+  }
+}

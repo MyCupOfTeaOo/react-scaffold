@@ -1,0 +1,225 @@
+import {
+  useState,
+  useCallback,
+  useEffect,
+  DependencyList,
+  useRef,
+  useMemo,
+} from 'react';
+import { Modal } from 'teaness';
+import { ReqResponse } from '@/utils/request';
+import { respCode } from '@/constant';
+import { message } from 'antd';
+import { DataGridRef, getLocationGridInit } from 'teaness/es/DataGrid/DataGrid';
+import { Location } from '@/typings';
+
+export interface PaginationOptions {
+  defaultCurrent?: number;
+  defaultPageSize?: number;
+  defaultTotal?: number;
+}
+
+export function usePagination(options?: PaginationOptions) {
+  const [current, setCurrent] = useState(options?.defaultCurrent ?? 1);
+  const [pageSize, setPageSize] = useState(options?.defaultPageSize ?? 10);
+  const [total, setTotal] = useState(options?.defaultTotal);
+  const showTotal = useCallback((item: number, range: [number, number]) => {
+    return range[1] !== 0
+      ? `${range[0]}-${range[1]} 共 ${item} 条数据`
+      : '暂无数据';
+  }, []);
+
+  const onChange = useCallback((page: number, size?: number) => {
+    setCurrent(page);
+    if (size) setPageSize(size);
+  }, []);
+  return {
+    current,
+    pageSize,
+    onChange,
+    onShowSizeChange: onChange,
+    showSizeChanger: true,
+    showQuickJumper: true,
+    size: 'small',
+    total,
+    setTotal,
+    showTotal,
+  };
+}
+
+export interface Option {
+  label: string;
+  value: any;
+  children?: Option[];
+}
+
+export function optionsFilter<T extends Option>(
+  options: T[] | undefined,
+  callback: (option: T) => boolean,
+): T[] | undefined {
+  return options
+    ?.filter(option => {
+      return callback(option);
+    })
+    .map(option => ({
+      ...option,
+      children: optionsFilter(option.children as T[], callback),
+    }));
+}
+
+export function useOptions<T extends Option>(
+  loadFunc: () => Promise<Option[]> & {
+    cancel: () => void;
+  },
+  deps?: DependencyList,
+  otherOptions?: {
+    pattern?: RegExp;
+  },
+): T[] | undefined {
+  const [options, setOptions] = useState<T[]>();
+  const pattern = otherOptions?.pattern;
+  useEffect(() => {
+    const req = loadFunc();
+    req
+      .then(res => {
+        setOptions(res as T[]);
+      })
+      .catch(err => {
+        Modal.error({
+          content: err,
+        });
+      });
+    return req.cancel;
+  }, deps);
+  if (pattern) {
+    return optionsFilter(options, option => pattern.test(option.value));
+  }
+  return options;
+}
+
+type GetResponseDataType<
+  T extends Promise<ReqResponse<any>>
+> = T extends Promise<ReqResponse<infer R>> ? R : any;
+
+type GetResponseType<T extends Promise<ReqResponse<any>>> = T extends Promise<
+  infer R
+>
+  ? R
+  : any;
+
+export function useRequest<
+  T extends any = any,
+  F extends (...args: any) => Promise<ReqResponse<T>> = (
+    ...args: any
+  ) => Promise<ReqResponse<T>>
+>(
+  requset: F,
+  options: {
+    params?: Parameters<F>;
+    showSuccess?: boolean;
+    showError?: boolean;
+    cancel?: () => void;
+    autoFirst?: boolean;
+    onSuccess?: (args: GetResponseType<ReturnType<F>>) => void;
+    onError?: (args: GetResponseType<ReturnType<F>>) => void;
+  } = {},
+  deps?: DependencyList,
+) {
+  const {
+    showError = true,
+    showSuccess = !options.autoFirst,
+    cancel,
+    autoFirst,
+    onSuccess,
+    onError,
+  } = options;
+  const [count, setCount] = useState(autoFirst ? 1 : 0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string>();
+  const [success, setSuccess] = useState<string>();
+  const [data, setData] = useState<GetResponseDataType<ReturnType<F>>>();
+  const paramsRef = useRef<Parameters<F> | undefined>(options.params);
+  const run = useCallback((p?: Parameters<F>) => {
+    paramsRef.current = p;
+    setCount(prevCount => prevCount + 1);
+  }, []);
+  useEffect(() => {
+    paramsRef.current = options.params;
+  }, deps || []);
+  useEffect(() => {
+    if (count < 1) return;
+    setLoading(true);
+    requset(...((paramsRef.current as any) || []))
+      .then(res => {
+        if (res.code === respCode.success) {
+          setSuccess(res.msg);
+          setData(res.data);
+          if (showSuccess) {
+            message.success(res.msg);
+          }
+          if (onSuccess) {
+            onSuccess(res as any);
+          }
+        } else {
+          setError(res.msg);
+          if (showError) {
+            Modal.error({
+              content: res.msg,
+            });
+          }
+          if (onError) {
+            onError(res as any);
+          }
+        }
+      })
+      .catch(err => {
+        setError(err);
+        if (showError) {
+          Modal.error({
+            content: err,
+          });
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+    return cancel;
+  }, [count, ...(deps || [])]);
+  return {
+    loading,
+    data,
+    setData,
+    success,
+    error,
+    run,
+    paramsRef,
+  };
+}
+
+export interface UseGridOption {
+  /**
+   * 默认 grid
+   */
+  gridId: string;
+}
+
+export function useGrid<T = any>(location?: Location, option?: UseGridOption) {
+  const gridRef = useRef<DataGridRef>();
+  const defaultQueryData = useMemo(
+    () =>
+      getLocationGridInit<Partial<T>>(
+        'queryData',
+        {},
+        option?.gridId || 'grid',
+        location,
+      ),
+    [],
+  );
+  const [queryData, setQueryData] = useState(defaultQueryData);
+  return {
+    defaultQueryData,
+    gridRef,
+    setQueryData,
+    queryData,
+  };
+}
