@@ -121,7 +121,7 @@ export function GenSubRoutes(
       });
       return {
         menuId: mid,
-        component: component || NotImplementPage,
+        component,
         path,
         title: item.title,
         routes: subRoutes,

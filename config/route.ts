@@ -41,12 +41,16 @@ function subPagesGen(subPage?: SubPageConfig[]): string {
     const temp1 = subPage.reduce((memo, item) => {
       const subPageStr = subPagesGen(item.subPage);
       const temp2 = `{
-        component: __IS_BROWSER
+      component: ${
+        item.component
+          ? `__IS_BROWSER
         ? dynamic({
           loader: () => import('${item.component}'),
           loading: Loading
         })
-        : require('${item.component}').default,
+        : require('${item.component}').default`
+          : undefined
+      },
         url: '${item.url}',
         isMenu: false,
         title: '${item.title || ''}',
