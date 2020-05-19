@@ -17,17 +17,12 @@ $item-h: 40px;
 .layout {
   width: 480px;
   margin: 0 auto;
-  box-shadow: 5px 5px 20px $component-shadow-color;
+  box-shadow: $component-shadow;
   padding-top: 40px;
-  background: linear-gradient(
-    179.407632981258deg,
-    rgba(255, 255, 255, 1) 1%,
-    rgba(242, 242, 242, 1) 99%
-  );
+  backdrop-filter: blur(2px);
 }
 .form {
-  width: 65%;
-  max-width: 368px;
+  width: 368px;
   margin: auto;
 }
 .captcha {
