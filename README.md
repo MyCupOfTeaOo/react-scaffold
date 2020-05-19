@@ -1,5 +1,7 @@
 # react 手脚架
 
+![页面截图](./public/welcome.png)
+
 <!-- TOC -->
 
 - [1. 概述](#1-概述)
