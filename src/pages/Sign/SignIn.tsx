@@ -1,9 +1,9 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react';
 import router from 'umi/router';
-import { Input, Row, Col, Button, Alert, Modal } from 'antd';
+import { Input, Row, Col, Button, Alert, Modal, Spin } from 'antd';
 import Icon, { UserOutlined, LockOutlined } from '@ant-design/icons';
 import Redirect from 'umi/redirect';
-import { useForm, useStore, Label } from 'teaness';
+import { useForm, useStore, Label, login } from 'teaness';
 import { inject } from 'mobx-react';
 import { Link } from 'umi';
 import { getGuestUid, fakeAccountLogin } from '@/service/login';
@@ -157,15 +157,7 @@ function SignIn(props: SignInProps) {
           />
         )}
         <div className={styles.form}>
-          <Form
-            layout={{
-              label: {
-                childrenStyle: {
-                  width: '100%',
-                },
-              },
-            }}
-          >
+          <Form layout={login}>
             <Item id="username">
               <Input
                 placeholder="账户"
@@ -197,28 +189,22 @@ function SignIn(props: SignInProps) {
                     />
                   </Col>
                   <Col span={8} className={styles.captcha}>
-                    <Button
-                      style={{
-                        paddingLeft: 15,
-                        width: '100%',
-                      }}
-                      loading={loading}
-                      size="large"
-                      onClick={onGetCaptcha}
-                    >
-                      {uid ? (
-                        <img
-                          src={
-                            apiPrefix
-                              ? `/${apiPrefix}/user/auth/refresh/${uid}`
-                              : `/user/auth/refresh/${uid}`
-                          }
-                          alt="验证码"
-                        />
-                      ) : (
-                        '暂无验证码'
-                      )}
-                    </Button>
+                    <Spin spinning={loading}>
+                      <Button size="large" block onClick={onGetCaptcha}>
+                        {uid ? (
+                          <img
+                            src={
+                              apiPrefix
+                                ? `/${apiPrefix}/user/auth/refresh/${uid}`
+                                : `/user/auth/refresh/${uid}`
+                            }
+                            alt="验证码"
+                          />
+                        ) : (
+                          '验证码'
+                        )}
+                      </Button>
+                    </Spin>
                   </Col>
                 </Row>
               )}
@@ -230,7 +216,7 @@ function SignIn(props: SignInProps) {
                 type="primary"
                 htmlType="submit"
                 onClick={submit}
-                className={styles.loginButton}
+                block
               >
                 登录
               </Button>
