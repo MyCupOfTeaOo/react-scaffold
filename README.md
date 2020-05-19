@@ -1,4 +1,4 @@
-# react手脚架
+# react 手脚架
 
 <!-- TOC -->
 
@@ -78,6 +78,8 @@ vscode settings 可以配上
 
 # 5. 组件用例
 
-组件库地址 http://192.168.117.120/teaness
+组件库地址
+外网,需翻墙加速 [teaness.org](https://teaness.org/)
+内网,需翻墙加速 [teaness.org](http://teaness.org/)
 
 # 6. 备注
