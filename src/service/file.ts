@@ -1,32 +1,33 @@
-import { CancelToken } from 'umi-request';
-import { stringify } from 'querystring';
-import axios from 'axios';
+import Axios, { CancelToken } from 'axios';
 import { UploadFile } from 'teaness/es/Form/Components/Upload/typings';
-import request, { ReqResponse, eRequest } from '@/utils/request';
-import { respCode } from '@/constant';
+import request, { ReqResponse } from '@/utils/request';
 import { apiPrefix } from '#/projectConfig';
 
 export async function getFileInfoByUri(
   uri: string,
   cancelToken?: CancelToken,
 ): Promise<ReqResponse> {
-  return request.post(`/file/getFileInfoByUri`, {
-    data: stringify({ uri }),
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+  return request.post(
+    `/file/getFileInfoByUri`,
+    {},
+    {
+      params: { uri },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      },
+      cancelToken,
     },
-    cancelToken,
-  });
+  );
 }
 
 export function uploadFile(
   file: File | UploadFile,
   onUploadProgress?: (percent: number, progressEvent?: any) => void,
 ) {
-  const source = axios.CancelToken.source();
+  const source = Axios.CancelToken.source();
   const formData = new FormData();
   formData.append('file', ((file as UploadFile).originFileObj || file) as File);
-  const r = eRequest
+  const r = request
     .post('/file/uploadFile', formData, {
       cancelToken: source.token,
       headers: { 'content-type': 'multipart/form-data' },
@@ -40,7 +41,7 @@ export function uploadFile(
         : undefined,
     })
     .then(resp => {
-      if (resp.code === respCode.success) {
+      if (resp.isSuccess) {
         return {
           uid: resp.data.uri,
           name: resp.data.originalFileName,
@@ -65,9 +66,9 @@ export function uploadFile(
 }
 
 export const getFileInfo = (uri: string) => {
-  const { token, cancel } = request.CancelToken.source();
+  const { token, cancel } = Axios.CancelToken.source();
   const r = getFileInfoByUri(uri, token).then(resp => {
-    if (resp.code === respCode.success && resp.data) {
+    if (resp.isSuccess && resp.data) {
       return {
         name: resp.data.originalFileName,
         url: `/${apiPrefix}/file/downloadFileByUri?uri=${resp.data.uri}`,

@@ -11,7 +11,6 @@ import { RouteProps } from '@/typings';
 import User from '@/stores/User';
 import { ReactComponent as KeyBoard } from '@/assets/keyboard.svg';
 import { apiPrefix } from '#/projectConfig';
-import { respCode } from '../../constant';
 import { setToken, getToken } from '../../utils/authority';
 import styles from './SignIn.scss';
 
@@ -32,7 +31,6 @@ function SignIn(props: SignInProps) {
   const [uid, setuid] = useState<string>('');
   const [loading, setloading] = useState(false);
   const [errText, setErrText] = useState<string | undefined>(undefined);
-
   const store = useStore<SignForm>({
     username: {
       rules: [
@@ -110,7 +108,7 @@ function SignIn(props: SignInProps) {
           sysId: props.sysId,
         })
           .then(resp => {
-            if (resp.code === respCode.success) {
+            if (resp.isSuccess) {
               if (resp.data.res === '1') {
                 setToken(resp.data.jwt);
                 props.user.loadUser();

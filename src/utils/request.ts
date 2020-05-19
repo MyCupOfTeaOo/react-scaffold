@@ -1,19 +1,20 @@
 /**
  * request 网络请求工具
- * 更详细的 api 文档: https://github.com/umijs/umi-request
+ * 更详细的 api 文档: https://github.com/axios/axios
  */
-import { extend, RequestOptionsInit } from 'umi-request';
 import axios, {
   AxiosRequestConfig,
   AxiosPromise,
   AxiosInterceptorManager,
 } from 'axios';
-import { stringify } from 'qs';
-import stores from '@/stores';
 import { apiPrefix } from '#/projectConfig';
-import { respCode } from '../constant';
-import { getToken, clearToken } from './authority';
 import { safeParse } from './utils';
+import { getToken } from './authority';
+
+export enum respCode {
+  success = 200,
+  cancel = 0,
+}
 
 export const codeMessage: { [n: number]: string } = {
   200: '服务器成功返回请求的数据。',
@@ -39,8 +40,14 @@ export const codeMessage: { [n: number]: string } = {
 export interface ReqResponse<T = any> {
   msg: string;
   code: number;
+  isSuccess?: boolean;
+  isCancel?: boolean;
   data?: T;
 }
+
+export type CancellablePromise<T> = Promise<T> & {
+  cancel: (str?: string) => void;
+};
 
 const errorHandler = async (error: {
   response: Response;
@@ -48,14 +55,6 @@ const errorHandler = async (error: {
 }): Promise<ReqResponse> => {
   const { response, message } = error;
   if (response && response.status) {
-    if (response.status === 403) {
-      stores.user.clearUser();
-      clearToken();
-      // 可能是盐城的
-      window.location.href = `/sign/signIn?${stringify({
-        sysId: stores.global.sysId,
-      })}`;
-    }
     const respText = await response.text?.();
     const respJson = safeParse(respText);
     const errortext =
@@ -71,35 +70,14 @@ const errorHandler = async (error: {
   return {
     code: respCode.cancel,
     msg: message || '',
+    isCancel: true,
   };
 };
 
-/**
- * 配置request请求时的默认参数
- */
-
-const request = extend({
-  errorHandler,
-  // 默认错误处理
-  prefix: apiPrefix ? `/${apiPrefix}` : undefined,
-
-  credentials: 'include', // 默认请求是否带上cookie
-});
-request.use(async (ctx, next) => {
-  const token = getToken();
-  if (token) {
-    ctx.req.options.headers = {
-      ...ctx.req.options.headers,
-      token,
-    };
-  }
-  await next();
-});
-
 type AxiosResponse<T = any> = T;
 
-const eRequest = axios.create({
-  baseURL: apiPrefix ? `/${apiPrefix}` : undefined,
+const request = axios.create({
+  baseURL: `/${apiPrefix || ''}`,
 }) as {
   (config: AxiosRequestConfig): AxiosPromise;
   (url: string, config?: AxiosRequestConfig): AxiosPromise;
@@ -124,6 +102,10 @@ const eRequest = axios.create({
     url: string,
     config?: AxiosRequestConfig,
   ): Promise<R>;
+  options<T = ReqResponse, R = AxiosResponse<T>>(
+    url: string,
+    config?: AxiosRequestConfig,
+  ): Promise<R>;
   post<T = ReqResponse, R = AxiosResponse<T>>(
     url: string,
     data?: any,
@@ -140,80 +122,21 @@ const eRequest = axios.create({
     config?: AxiosRequestConfig,
   ): Promise<R>;
 };
-eRequest.interceptors.request.use(config => {
+
+request.interceptors.request.use(config => {
   return {
     ...config,
     headers: {
-      ...config.headers,
       token: getToken(),
+      ...config.headers,
     },
   };
 });
-eRequest.interceptors.response.use(response => {
-  return response.data;
+request.interceptors.response.use(response => {
+  return {
+    ...response.data,
+    isSuccess: true,
+  };
 }, errorHandler);
 
-export function cancellableRequestPromise<T>(
-  response: Promise<ReqResponse>,
-  cancel: () => void,
-) {
-  const r = response.then(resp => {
-    if (resp.code === respCode.success) {
-      return resp.data;
-    } else {
-      return Promise.reject(resp);
-    }
-  }) as Promise<T> & {
-    cancel: () => void;
-  };
-  r.cancel = cancel;
-  return r;
-}
-
-export type CancellablePromise<T> = Promise<T> & {
-  cancel: (str?: string) => void;
-};
-
-export function download<T = any>(
-  url: string,
-  options?: RequestOptionsInit & {
-    filename?: string;
-  },
-): Promise<ReqResponse<T>> {
-  return request
-    .post(url, {
-      ...options,
-      parseResponse: false,
-    })
-    .then((res: Response) => {
-      const disposition = res.headers.get('content-disposition');
-      if (disposition) {
-        const sourceFilename = /filename=(?<filename>[^;]+)/.exec(disposition)
-          ?.groups?.filename;
-        if (sourceFilename) {
-          return res.blob().then(blob => {
-            const a = document.createElement('a');
-            const turl = window.URL.createObjectURL(blob);
-            a.href = turl;
-            a.download = options?.filename || sourceFilename;
-            a.click();
-            window.URL.revokeObjectURL(turl);
-            return {
-              msg: '下载成功',
-              code: respCode.success,
-            };
-          });
-        }
-      } else {
-        return res.json().then(response => {
-          if (response.error) {
-            return errorHandler(response);
-          }
-          return response;
-        });
-      }
-    });
-}
-
-export { eRequest };
 export default request;

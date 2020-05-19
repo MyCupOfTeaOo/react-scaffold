@@ -4,14 +4,9 @@ import {
   useEffect,
   DependencyList,
   useRef,
-  useMemo,
 } from 'react';
-import { Modal } from 'teaness';
 import { ReqResponse } from '@/utils/request';
-import { respCode } from '@/constant';
-import { message } from 'antd';
-import { DataGridRef, getLocationGridInit } from 'teaness/es/DataGrid/DataGrid';
-import { Location } from '@/typings';
+import { message, Modal } from 'antd';
 
 export interface PaginationOptions {
   defaultCurrent?: number;
@@ -151,7 +146,7 @@ export function useRequest<
     setLoading(true);
     requset(...((paramsRef.current as any) || []))
       .then(res => {
-        if (res.code === respCode.success) {
+        if (res.isSuccess) {
           setSuccess(res.msg);
           setData(res.data);
           if (showSuccess) {
@@ -201,25 +196,4 @@ export interface UseGridOption {
    * 默认 grid
    */
   gridId: string;
-}
-
-export function useGrid<T = any>(location?: Location, option?: UseGridOption) {
-  const gridRef = useRef<DataGridRef>();
-  const defaultQueryData = useMemo(
-    () =>
-      getLocationGridInit<Partial<T>>(
-        'queryData',
-        {},
-        option?.gridId || 'grid',
-        location,
-      ),
-    [],
-  );
-  const [queryData, setQueryData] = useState(defaultQueryData);
-  return {
-    defaultQueryData,
-    gridRef,
-    setQueryData,
-    queryData,
-  };
 }

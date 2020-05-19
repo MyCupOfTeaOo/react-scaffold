@@ -1,6 +1,5 @@
 import { observable, flow } from 'mobx';
 import { ReqResponse } from '@/utils/request';
-import { respCode } from '@/constant';
 import { findCascaderByDictCodeAndDictType } from '@/service/config';
 import { getCascaderChain } from './utils';
 
@@ -66,7 +65,7 @@ export class Store {
                 code,
               );
 
-              if (resp.code === respCode.success) {
+              if (resp.isSuccess) {
                 if (!resp.data) {
                   curNode.state = 'notFound';
                 } else {

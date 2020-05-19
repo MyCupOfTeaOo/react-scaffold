@@ -1,49 +1,51 @@
-import { CancelToken } from 'umi-request';
-import { stringify } from 'querystring';
 import request, { ReqResponse } from '@/utils/request';
-import { respCode, enableState } from '@/constant';
+import { enableState } from '@/constant';
+import Axios, { CancelToken } from 'axios';
 
 export async function findAllByDictTypeEnable(
   dictType: string,
   cancelToken?: CancelToken,
   queryAll: boolean = false,
-): Promise<ReqResponse> {
-  return request.post('/config/dict/common/findAllByDictTypeEnable', {
-    data: stringify({
-      dictType,
-      queryAll,
-    }),
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+) {
+  return request.post(
+    '/config/dict/common/findAllByDictTypeEnable',
+    {},
+    {
+      params: {
+        dictType,
+        queryAll,
+      },
+      cancelToken,
     },
-    cancelToken,
-  });
+  );
 }
 
 export async function switchCommonDict(
   id: string,
   enable: enableState,
 ): Promise<ReqResponse> {
-  return request.post('/config/dict/common/switch', {
-    data: stringify({
-      id,
-      enable,
-    }),
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+  return request.post(
+    '/config/dict/common/switch',
+    {},
+    {
+      params: {
+        id,
+        enable,
+      },
     },
-  });
+  );
 }
 
 export async function getCommonDict(id: string): Promise<ReqResponse> {
-  return request.post('/config/dict/common/get', {
-    data: stringify({
-      id,
-    }),
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+  return request.post(
+    '/config/dict/common/get',
+    {},
+    {
+      params: {
+        id,
+      },
     },
-  });
+  );
 }
 
 export async function newCommonDict(): Promise<ReqResponse> {
@@ -51,22 +53,18 @@ export async function newCommonDict(): Promise<ReqResponse> {
 }
 
 export async function addCommonDict(data: any): Promise<ReqResponse> {
-  return request.post('/config/dict/common/add', {
-    data,
-  });
+  return request.post('/config/dict/common/add', data);
 }
 
 export async function updateCommonDict(data: any): Promise<ReqResponse> {
-  return request.post('/config/dict/common/update', {
-    data,
-  });
+  return request.post('/config/dict/common/update', data);
 }
 
 export const loadDict = (dictType: string) => {
   return () => {
-    const { token, cancel } = request.CancelToken.source();
+    const { token, cancel } = Axios.CancelToken.source();
     const r = findAllByDictTypeEnable(dictType, token).then(resp => {
-      if (resp.code === respCode.success) {
+      if (resp.isSuccess) {
         if (Array.isArray(resp.data)) {
           return resp.data.map(item => ({
             label: item.dictValue,
@@ -91,41 +89,39 @@ export async function newCascadeDict(): Promise<ReqResponse> {
 }
 
 export async function addCascadeDict(data: any): Promise<ReqResponse> {
-  return request.post('/config/dict/cascade/add', {
-    data,
-  });
+  return request.post('/config/dict/cascade/add', data);
 }
 
 export async function updateCascadeDict(data: any): Promise<ReqResponse> {
-  return request.post('/config/dict/cascade/update', {
-    data,
-  });
+  return request.post('/config/dict/cascade/update', data);
 }
 
 export async function switchCascadeDict(
   id: string,
   enable: enableState,
 ): Promise<ReqResponse> {
-  return request.post('/config/dict/cascade/switch', {
-    data: stringify({
-      id,
-      enable,
-    }),
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+  return request.post(
+    '/config/dict/cascade/switch',
+    {},
+    {
+      params: {
+        id,
+        enable,
+      },
     },
-  });
+  );
 }
 
 export async function getCascadeDict(id: string): Promise<ReqResponse> {
-  return request.post('/config/dict/cascade/get', {
-    data: stringify({
-      id,
-    }),
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+  return request.post(
+    '/config/dict/cascade/get',
+    {},
+    {
+      params: {
+        id,
+      },
     },
-  });
+  );
 }
 
 export async function findByFather(
@@ -133,16 +129,17 @@ export async function findByFather(
   fatherCode?: string,
   cancelToken?: CancelToken,
 ): Promise<ReqResponse> {
-  return request.post('/config/dict/cascade/findByFather', {
-    data: stringify({
-      fatherCode,
-      dictType,
-    }),
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+  return request.post(
+    '/config/dict/cascade/findByFather',
+    {},
+    {
+      params: {
+        fatherCode,
+        dictType,
+      },
+      cancelToken,
     },
-    cancelToken,
-  });
+  );
 }
 
 export async function findAllCascaderByDictTypeEnable(
@@ -155,7 +152,6 @@ export async function findAllCascaderByDictTypeEnable(
       dictType,
       queryAll,
     },
-
     cancelToken,
   });
 }
@@ -165,22 +161,23 @@ export async function findCascaderByDictCodeAndDictType(
   dictCode: string,
   cancelToken?: CancelToken,
 ): Promise<ReqResponse> {
-  return request.post('/config/dict/cascade/findByDictCodeAndDictType', {
-    data: stringify({
-      dictCode,
-      dictType,
-    }),
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+  return request.post(
+    '/config/dict/cascade/findByDictCodeAndDictType',
+    {},
+    {
+      params: {
+        dictCode,
+        dictType,
+      },
+      cancelToken,
     },
-    cancelToken,
-  });
+  );
 }
 export const loadChildDict = (dictType: string) => {
   return (fatherCode?: string) => {
-    const { token, cancel } = request.CancelToken.source();
+    const { token, cancel } = Axios.CancelToken.source();
     const r = findByFather(dictType, fatherCode, token).then(resp => {
-      if (resp.code === respCode.success) {
+      if (resp.isSuccess) {
         if (Array.isArray(resp.data)) {
           return resp.data.map(item => ({
             label: item.dictValue,
@@ -237,9 +234,9 @@ export function reduceCascaderDict(
 
 export const loadAllDict = (dictType: string) => {
   return () => {
-    const { token, cancel } = request.CancelToken.source();
+    const { token, cancel } = Axios.CancelToken.source();
     const r = findAllCascaderByDictTypeEnable(dictType, token).then(resp => {
-      if (resp.code === respCode.success) {
+      if (resp.isSuccess) {
         if (Array.isArray(resp.data)) {
           return reduceCascaderDict(
             resp.data as [

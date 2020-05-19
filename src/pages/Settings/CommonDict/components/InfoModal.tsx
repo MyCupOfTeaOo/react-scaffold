@@ -6,7 +6,6 @@ import React, {
 } from 'react';
 import { Spin, message, Input, Modal } from 'antd';
 import { useForm, useStore, Select, vertical } from 'teaness';
-import { respCode } from '@/constant';
 import {
   getCommonDict,
   newCommonDict,
@@ -38,12 +37,12 @@ const Info: React.ForwardRefRenderFunction<any, InfoProps> = (props, ref) => {
   useEffect(() => {
     if (id) {
       getCommonDict(id).then(resp => {
-        if (resp.code === respCode.success) setInfo(resp.data);
+        if (resp.isSuccess) setInfo(resp.data);
         else Modal.error({ title: resp.msg });
       });
     } else {
       newCommonDict().then(resp => {
-        if (resp.code === respCode.success) setInfo(resp.data);
+        if (resp.isSuccess) setInfo(resp.data);
         else Modal.error({ title: resp.msg });
       });
     }
@@ -110,7 +109,7 @@ const Info: React.ForwardRefRenderFunction<any, InfoProps> = (props, ref) => {
                 ...values,
               });
             }
-            if (resp.code === respCode.success) {
+            if (resp.isSuccess) {
               message.success(resp.msg);
               if (success) success();
             } else {

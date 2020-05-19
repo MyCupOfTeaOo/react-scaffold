@@ -8,7 +8,6 @@ import React, {
 import { Spin, message, Alert, Input, Modal } from 'antd';
 import { useForm, useStore, Select, Cascader, vertical } from 'teaness';
 import { InputProps } from 'antd/lib/input';
-import { respCode } from '@/constant';
 import { loadCascadeType } from '@/combination';
 import {
   loadChildDict,
@@ -64,7 +63,7 @@ const Info: React.ForwardRefRenderFunction<any, InfoProps> = (props, ref) => {
   useEffect(() => {
     if (id) {
       getCascadeDict(id).then(resp => {
-        if (resp.code === respCode.success) {
+        if (resp.isSuccess) {
           const l = (resp.data.dictCode as string).split('-');
           setInfo({
             ...resp.data,
@@ -75,7 +74,7 @@ const Info: React.ForwardRefRenderFunction<any, InfoProps> = (props, ref) => {
       });
     } else {
       newCascadeDict().then(resp => {
-        if (resp.code === respCode.success) setInfo(resp.data);
+        if (resp.isSuccess) setInfo(resp.data);
         else Modal.error({ title: resp.msg });
       });
     }
@@ -175,7 +174,7 @@ const Info: React.ForwardRefRenderFunction<any, InfoProps> = (props, ref) => {
                   : values.dictCode,
               });
             }
-            if (resp.code === respCode.success) {
+            if (resp.isSuccess) {
               message.success(resp.msg);
               if (success) success();
             } else {

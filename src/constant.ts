@@ -1,8 +1,3 @@
-export enum respCode {
-  success = 200,
-  cancel = 0,
-}
-
 export const enableOptions = [
   {
     label: '启用',

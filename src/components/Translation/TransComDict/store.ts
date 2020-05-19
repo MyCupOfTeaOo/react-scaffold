@@ -1,6 +1,5 @@
 import { observable, flow } from 'mobx';
 import { ReqResponse } from '@/utils/request';
-import { respCode } from '@/constant';
 import { findAllByDictTypeEnable } from '@/service/config';
 
 export interface CommonDictCache {
@@ -41,7 +40,7 @@ export class Store {
           undefined,
           true,
         );
-        if (resp.code === respCode.success) {
+        if (resp.isSuccess) {
           if (Array.isArray(resp.data)) {
             const temp: {
               [key: string]: {

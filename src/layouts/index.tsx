@@ -8,6 +8,7 @@ import router from 'umi/router';
 import { Registry as UploadRegistry } from 'teaness/es/Form/Components/Upload';
 import { Base64 } from 'js-base64';
 import { PictureView, BaseGrid } from 'teaness';
+import Axios from 'axios';
 import { RequestData, ResponseData } from 'teaness/es/DataGrid/typings';
 import { CancellablePromise } from 'teaness/es/typings';
 import stores from '@/stores';
@@ -15,7 +16,6 @@ import { RouteProps } from '@/typings';
 import request, { ReqResponse } from '@/utils/request';
 import { getFileInfo, uploadFile } from '@/service/file';
 import { setToken, getToken } from '@/utils/authority';
-import { respCode } from '@/constant';
 import styles from './index.scss';
 import { apiPrefix } from '#/projectConfig';
 
@@ -35,7 +35,7 @@ function dataGridRequest<T>(url: string, payload: RequestData<T>) {
     columnProp: sorter.colId,
   }));
 
-  const { token: cancelToken, cancel } = request.CancelToken.source();
+  const { token: cancelToken, cancel } = Axios.CancelToken.source();
   const promise = request.post(url, {
     cancelToken,
     data: {
@@ -46,13 +46,13 @@ function dataGridRequest<T>(url: string, payload: RequestData<T>) {
     },
   }) as Promise<ReqResponse>;
   const t = promise.then(res => {
-    if (res.code === respCode.success) {
+    if (res.isSuccess) {
       return {
         list: res.data.list,
         total: res.data.totalitem,
       };
     }
-    if (res.code === respCode.cancel) {
+    if (res.isCancel) {
       return {
         isCancel: true,
         list: [],

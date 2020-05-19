@@ -2,10 +2,9 @@ import { observable, action, flow } from 'mobx';
 import { debounce } from 'lodash';
 import { getOprs } from '@/service/permission';
 import cache from '@/utils/cache';
+import { ReqResponse } from '@/utils/request';
 import { sysId } from '#/projectConfig';
 import { RootStore } from '.';
-import { ReqResponse } from '../utils/request';
-import { respCode } from '../constant';
 
 export interface MenuId2Url {
   [key: string]: string;
@@ -77,7 +76,7 @@ export default class Global {
     // 失败重复请求三次
     for (let i = 0; i < 3; i += 1) {
       const resp: ReqResponse = yield getOprs(menuId);
-      if (resp.code === respCode.success) {
+      if (resp.isSuccess) {
         if (Array.isArray(resp.data)) {
           this.menuId2Oprs[menuId] = resp.data;
         } else {

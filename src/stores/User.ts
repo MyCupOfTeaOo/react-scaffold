@@ -1,7 +1,6 @@
 import { observable, action, flow } from 'mobx';
 import { message } from 'antd';
 import { getCurUser } from '@/service/login';
-import { respCode } from '@/constant';
 import { ReqResponse } from '@/utils/request';
 import { RootStore } from '.';
 
@@ -59,7 +58,7 @@ export default class User {
 
   loadUser = flow(function*(this: User): any {
     const res = (yield getCurUser()) as ReqResponse<AuthType>;
-    if (res.code === respCode.success) {
+    if (res.isSuccess) {
       this.user = res.data;
     } else {
       message.error(res.msg);

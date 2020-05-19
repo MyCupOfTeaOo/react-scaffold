@@ -4,7 +4,6 @@ import { Spin, Layout, Modal } from 'antd';
 import Redirect from 'umi/redirect';
 import { inject, observer } from 'mobx-react';
 import { getMenuData } from '@/service/permission';
-import { respCode } from '@/constant';
 import pages from '@/pages/.pages';
 import { getToken } from '@/utils/authority';
 import { GenRoutes } from '@/utils/utils';
@@ -33,7 +32,7 @@ const BasicLayout: React.FC<RouteProps & {
     if (!getToken()) return;
     getMenuData()
       .then(resp => {
-        if (resp.code === respCode.success) {
+        if (resp.isSuccess) {
           if (window.g_routes[rootIndex]?.routes?.[index]?.routes) {
             const [routes, menuId2Url] = GenRoutes(resp.data, pages);
             props.global.setMenuId2Url(menuId2Url);

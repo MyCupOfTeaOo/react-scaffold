@@ -1,5 +1,4 @@
 import md5 from 'js-md5';
-import { stringify } from 'querystring';
 import request, { ReqResponse } from '@/utils/request';
 
 export async function getGuestUid(): Promise<ReqResponse> {
@@ -23,19 +22,22 @@ export async function fakeAccountLogin({
   password: string;
   sysId: string;
 }): Promise<ReqResponse> {
-  return request.post(`/user/auth/login`, {
-    headers: {
-      verifyCode: captcha,
-      guestUid,
-      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-    },
+  return request.post(
+    `/user/auth/login`,
+    {},
+    {
+      headers: {
+        verifyCode: captcha,
+        guestUid,
+      },
 
-    data: stringify({
-      username,
-      password: md5(password),
-      sysId,
-    }),
-  });
+      params: {
+        username,
+        password: md5(password),
+        sysId,
+      },
+    },
+  );
 }
 
 export async function forgetPassword({

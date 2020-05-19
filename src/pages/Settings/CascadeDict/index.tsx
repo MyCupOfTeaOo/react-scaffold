@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState, useRef } from 'react';
+import React, { useMemo, useState, useRef } from 'react';
 import { Button, message, Badge, Input, Modal } from 'antd';
 import {
   Select,
@@ -13,7 +13,7 @@ import { FormConfigs } from 'teaness/es/Form/typings';
 import { inject } from 'mobx-react';
 import { ColumnDefs } from 'teaness/es/DataGrid/typings';
 import { RouteProps } from '@/typings';
-import { respCode, enableState, enableOptions } from '@/constant';
+import { enableState, enableOptions } from '@/constant';
 import { MenuId2Url } from '@/stores/Global';
 import { switchCascadeDict } from '@/service/config';
 import { loadCascadeType } from '@/combination';
@@ -113,7 +113,7 @@ const CascadeDict: React.FC<CascadeDictProps> = props => {
                           enableState.disabled,
                         )
                           .then(resp => {
-                            if (resp.code === respCode.success) message.success(resp.msg);
+                            if (resp.isSuccess) message.success(resp.msg);
                             else message.error(resp.msg);
                           })
                           .finally(() => {
@@ -139,7 +139,7 @@ const CascadeDict: React.FC<CascadeDictProps> = props => {
                           enableState.enable,
                         )
                           .then(resp => {
-                            if (resp.code === respCode.success) message.success(resp.msg);
+                            if (resp.isSuccess) message.success(resp.msg);
                             else message.error(resp.msg);
                           })
                           .finally(() => {
@@ -261,4 +261,4 @@ const CascadeDict: React.FC<CascadeDictProps> = props => {
 
 export default inject(({ global }) => ({
   menuId2Url: global.menuId2Url,
-}))(memo(CascadeDict));
+}))(CascadeDict);

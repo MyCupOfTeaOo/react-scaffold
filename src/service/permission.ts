@@ -1,7 +1,5 @@
-import { CancelToken } from 'umi-request';
-import { stringify } from 'querystring';
 import request, { ReqResponse } from '@/utils/request';
-import { respCode } from '../constant';
+import Axios, { CancelToken } from 'axios';
 
 export async function getGuestUid(): Promise<ReqResponse> {
   return request.get('/user/auth/getGuestUid');
@@ -14,15 +12,19 @@ export async function getMenuData(): Promise<ReqResponse> {
 export async function getRoleTreeList(
   cancelToken?: CancelToken,
 ): Promise<ReqResponse> {
-  return request.post(`/permission/api/SysRole/getRoleTreeList`, {
-    cancelToken,
-  });
+  return request.post(
+    `/permission/api/SysRole/getRoleTreeList`,
+    {},
+    {
+      cancelToken,
+    },
+  );
 }
 
 export const loadRoleList = () => {
-  const { token, cancel } = request.CancelToken.source();
+  const { token, cancel } = Axios.CancelToken.source();
   const r = getRoleTreeList(token).then(resp => {
-    if (resp.code === respCode.success) {
+    if (resp.isSuccess) {
       if (Array.isArray(resp.data)) {
         return resp.data.map(item => ({
           label: item.roleName,
@@ -42,10 +44,13 @@ export const loadRoleList = () => {
 };
 
 export async function getOprs(menuId: string): Promise<ReqResponse> {
-  return request.post(`/permission/api/SysRole2menu/getOprs`, {
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    data: stringify({
-      menuId,
-    }),
-  });
+  return request.post(
+    `/permission/api/SysRole2menu/getOprs`,
+    {},
+    {
+      params: {
+        menuId,
+      },
+    },
+  );
 }
