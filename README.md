@@ -80,6 +80,6 @@ vscode settings 可以配上
 
 组件库地址
 外网,需翻墙加速 [teaness.org](https://teaness.org/)
-内网,需翻墙加速 [teaness.org](http://teaness.org/)
+内网,隐身模式访问 [teaness.org](http://teaness.org/)
 
 # 6. 备注
