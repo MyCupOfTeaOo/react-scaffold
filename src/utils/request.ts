@@ -7,9 +7,11 @@ import axios, {
   AxiosPromise,
   AxiosInterceptorManager,
 } from 'axios';
+import stores from '@/stores';
+import { stringify } from 'qs';
 import { apiPrefix } from '#/projectConfig';
 import { safeParse } from './utils';
-import { getToken } from './authority';
+import { getToken, clearToken } from './authority';
 
 export enum respCode {
   success = 200,
@@ -55,6 +57,13 @@ const errorHandler = async (error: {
 }): Promise<ReqResponse> => {
   const { response, message } = error;
   if (response && response.status) {
+    if (response.status === 403) {
+      stores.user.clearUser();
+      clearToken();
+      window.location.href = `/sign/signIn'}?${stringify({
+        sysId: stores.global.sysId,
+      })}`;
+    }
     const respText = await response.text?.();
     const respJson = safeParse(respText);
     const errortext =
