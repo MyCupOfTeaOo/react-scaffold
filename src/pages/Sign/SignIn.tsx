@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react';
 import router from 'umi/router';
-import { Input, Row, Col, Button, Alert, Modal, Spin } from 'antd';
+import { Input, Row, Col, Button, Alert, Spin } from 'antd';
 import Icon, { UserOutlined, LockOutlined } from '@ant-design/icons';
 import Redirect from 'umi/redirect';
 import { useForm, useStore, Label, login } from 'teaness';
@@ -106,37 +106,18 @@ function SignIn(props: SignInProps) {
           ...(values as SignForm),
           guestUid: uid,
           sysId: props.sysId,
-        })
-          .then(resp => {
-            if (resp.isSuccess) {
-              if (resp.data.res === '1') {
-                setToken(resp.data.jwt);
-                props.user.loadUser();
-                setlogining(false);
-                router.replace('/');
-              } else if (resp.data.res === '2') {
-                Modal.error({
-                  title: '登录异常',
-                  content: '帐号存在问题,请联系管理员',
-                });
-              } else {
-                setErrText(resp.msg);
-                onGetCaptcha();
-                setlogining(false);
-              }
-            } else {
-              setErrText(resp.msg);
-              onGetCaptcha();
-              setlogining(false);
-            }
-          })
-          .catch(err2 => {
-            if (err2) {
-              setErrText('服务器连接异常');
-              onGetCaptcha();
-              setlogining(false);
-            }
-          });
+        }).then(resp => {
+          if (resp.isSuccess) {
+            setToken(resp.data.jwt);
+            props.user.loadUser();
+            setlogining(false);
+            router.replace('/');
+          } else {
+            setErrText(resp.msg);
+            onGetCaptcha();
+            setlogining(false);
+          }
+        });
       });
     },
     [uid],

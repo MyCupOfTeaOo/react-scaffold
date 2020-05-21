@@ -144,7 +144,7 @@ request.interceptors.request.use(config => {
 request.interceptors.response.use(response => {
   return {
     ...response.data,
-    isSuccess: true,
+    isSuccess: response.data?.code === respCode.success,
   };
 }, errorHandler);
 
