@@ -33,10 +33,11 @@
   :global(.ant-layout-sider-zero-width-trigger) {
     background: $primary-5;
   }
-  box-shadow: $component-shadow;
-  z-index: 9;
+  box-shadow: 0 2px 2px -2px rgba($color: #000000, $alpha: 0.16),
+    0 6px 6px 0 rgba($color: #000000, $alpha: 0.12),
+    0 12px 12px 4px rgba($color: #000000, $alpha: 0.09);
+  z-index: 99;
 }
-
 .trigger {
   $height: 40px;
   cursor: pointer;
