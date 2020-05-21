@@ -8,6 +8,7 @@ import {
   Col,
   useDataGrid,
   horizontal,
+  FoldCard,
 } from 'teaness';
 import { FormConfigs } from 'teaness/es/Form/typings';
 import { inject } from 'mobx-react';
@@ -163,7 +164,7 @@ const CascadeDict: React.FC<CascadeDictProps> = props => {
   const infoRef = useRef<InfoRef>();
   return (
     <div className="search-layout">
-      <div className="search-area">
+      <FoldCard title="查询条件">
         <Form layout={horizontal}>
           <Item id="dictType" text="类型">
             <Select requestMethod={loadCascadeType} />
@@ -214,7 +215,7 @@ const CascadeDict: React.FC<CascadeDictProps> = props => {
             </div>
           </Col>
         </Form>
-      </div>
+      </FoldCard>
       <Modal
         destroyOnClose
         visible={visible}

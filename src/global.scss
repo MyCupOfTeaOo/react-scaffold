@@ -229,25 +229,6 @@ html {
   flex-direction: column;
   padding: 8px;
   background: white;
-  .search-area {
-    background-color: $component-background;
-    padding: $tiny-padding;
-    border: 1px solid #eaeaea;
-    border-radius: 16px;
-    padding: 8px;
-    margin-bottom: 8px;
-    .label-children {
-      padding: $tiny-padding;
-    }
-    $input-height: 28px;
-    button {
-      margin-top: 4px;
-    }
-  }
-  $row-height: 32px;
-  .ag-theme-material .ag-cell {
-    line-height: $row-height;
-  }
 }
 
 .border-left-none {
