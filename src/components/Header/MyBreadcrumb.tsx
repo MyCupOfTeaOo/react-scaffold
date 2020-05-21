@@ -2,8 +2,11 @@ import React, { useMemo } from 'react';
 import { GRoute, Location } from '@/typings';
 import pathToRegexp from 'path-to-regexp';
 import { Breadcrumb } from 'antd';
+import classnames from 'classnames';
 import { HomeOutlined } from '@ant-design/icons';
 import { router } from 'umi';
+import { observer } from 'mobx-react';
+import stores from '@/stores';
 import styles from './Breadcrumb.scss';
 
 /* eslint-disable no-nested-ternary */
@@ -129,7 +132,15 @@ const MyBreadcrumb: React.FC<BreadcrumbProps> = props => {
       </Breadcrumb.Item>
     ));
   }, [breadCrumbMaps]);
-  return <Breadcrumb className={styles.breadcrumb}>{items}</Breadcrumb>;
+  return (
+    <Breadcrumb
+      className={classnames(styles.breadcrumb, {
+        [styles.siderZero]: stores.global.collapsed,
+      })}
+    >
+      {items}
+    </Breadcrumb>
+  );
 };
 
-export default MyBreadcrumb;
+export default observer(MyBreadcrumb);

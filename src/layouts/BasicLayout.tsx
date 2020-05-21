@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Spin, Layout, Modal } from 'antd';
-
+import { MenuFoldOutlined } from '@ant-design/icons';
 import Redirect from 'umi/redirect';
 import { inject, observer } from 'mobx-react';
 import { getMenuData } from '@/service/permission';
@@ -117,16 +117,16 @@ const BasicLayout: React.FC<RouteProps & {
             props.global.setCollapsed(!props.global.collapsed);
           }}
         >
-          {/* <div
+          <div
             title="收缩菜单"
             className={styles.trigger}
             onClick={() => {
               props.global.setCollapsed(!props.global.collapsed);
             }}
           >
-            <Icon type="menu-fold" />
-            <span className={styles.text}>&emsp;收缩菜单</span>
-          </div> */}
+            <span className={styles.text}>收缩菜单</span>&nbsp;
+            <MenuFoldOutlined />
+          </div>
           <Menu
             name={projectName}
             logo={logo}

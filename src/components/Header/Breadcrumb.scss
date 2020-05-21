@@ -1,5 +1,9 @@
 @import 'src/global.scss';
 .breadcrumb {
+  transition: all 0.5s;
   padding: $tiny-padding $small-padding;
   background-color: $component-background;
+  &.siderZero {
+    padding-left: 48px;
+  }
 }
