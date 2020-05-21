@@ -1,0 +1,97 @@
+import React, { useMemo } from 'react';
+import { Button, Input } from 'antd';
+import {
+  useForm,
+  DataGrid,
+  useStore,
+  Col,
+  useDataGrid,
+  horizontal,
+  FoldCard,
+} from 'teaness';
+import { inject } from 'mobx-react';
+import { ColumnDefs } from 'teaness/es/DataGrid/typings';
+import { RouteProps } from '@/typings';
+import { MenuId2Url } from '@/stores/Global';
+
+export interface {{name}}Props extends RouteProps {
+  menuId2Url: MenuId2Url;
+}
+
+interface FormType {
+  name: string;
+}
+
+const {{name}}: React.FC<{{name}}Props> = props => {
+  const { gridProps, gridRef, setQueryData, queryDataRef } = useDataGrid<
+    FormType
+  >({
+    location: props.location,
+    historyId: 'grid',
+  });
+  const store = useStore<FormType>(
+    {
+      name: {
+        defaultValue: queryDataRef.current.name,
+      },
+    },
+    [],
+  );
+  const { Form, Item } = useForm(store);
+  const columnDefs = useMemo<ColumnDefs>(() => {
+    return [
+      {
+        headerName: '名称',
+        field: 'name',
+      },
+    ];
+  }, []);
+  return (
+    <div className="search-layout">
+      <FoldCard title="查询条件">
+        <Form layout={horizontal}>
+          <Item id="name" text="查询名称">
+            <Input />
+          </Item>
+          <Col span={24}>
+            <div className="search-btns">
+              <Button
+                type="primary"
+                htmlType="submit"
+                onClick={e => {
+                  e.preventDefault();
+                  setQueryData(store.getValues());
+                  gridRef.current?.fetch({
+                    page: 1,
+                  });
+                }}
+              >
+                查询
+              </Button>
+              <Button
+                onClick={() => {
+                  setQueryData({});
+                  store.setAllValues(queryDataRef.current);
+                  gridRef.current?.fetch({
+                    page: 1,
+                  });
+                }}
+              >
+                重置
+              </Button>
+            </div>
+          </Col>
+        </Form>
+      </FoldCard>
+      <DataGrid
+        fetchUrl="{{fetch}}"
+        columnDefs={columnDefs}
+        {...gridProps}
+      />
+    </div>
+  );
+};
+
+export default inject(({ global }) => ({
+  menuId2Url: global.menuId2Url,
+}))({{name}});
