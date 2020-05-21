@@ -36,15 +36,18 @@ function dataGridRequest<T>(url: string, payload: RequestData<T>) {
   }));
 
   const { token: cancelToken, cancel } = Axios.CancelToken.source();
-  const promise = request.post(url, {
-    cancelToken,
-    data: {
+  const promise = request.post(
+    url,
+    {
       ...payload.queryData,
       sortColumns,
       len: payload.pageSize,
       page: payload.page,
     },
-  }) as Promise<ReqResponse>;
+    {
+      cancelToken,
+    },
+  ) as Promise<ReqResponse>;
   const t = promise.then(res => {
     if (res.isSuccess) {
       return {
