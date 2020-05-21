@@ -21,7 +21,7 @@ const routes: IRoute[] = [
       {
         path: '/',
         component: '../layouts/BasicLayout',
-        routes: [],
+        routes: [{ path: '/', component: '.' }],
       },
     ],
   },
