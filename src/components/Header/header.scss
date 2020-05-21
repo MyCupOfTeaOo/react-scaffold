@@ -41,18 +41,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
+  transition: all 0.2s;
   cursor: pointer;
   &:hover {
-    & > i {
-      font-size: 30px;
-    }
     color: $primary-5;
   }
-  & > i {
-    transition: all 0.2s;
-    font-size: 24px;
-  }
   & > span {
-    font-size: 14px;
+    &:first-child {
+      font-size: 20px;
+    }
   }
 }

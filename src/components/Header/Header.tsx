@@ -28,7 +28,7 @@ const Header: React.FC<HeaderProps> = ({ clearUser, logo }) => {
         </div>
       </Link>
 
-      <div className={styles.logo}>
+      <div className={styles.menu}>
         <div
           className={styles.icon}
           onClick={() => {
