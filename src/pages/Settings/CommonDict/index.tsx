@@ -10,7 +10,6 @@ import {
   horizontal,
   FoldCard,
 } from 'teaness';
-import { FormConfigs } from 'teaness/es/Form/typings';
 import { inject } from 'mobx-react';
 import { ColumnDefs } from 'teaness/es/DataGrid/typings';
 import { RouteProps } from '@/typings';
@@ -39,26 +38,21 @@ const CommonDict: React.FC<CommonDictProps> = props => {
   });
   const [visible, setVisible] = useState(false);
   const [info, setInfo] = useState<any>({});
-  const formConfigs = useMemo<FormConfigs<FormType>>(
-    () => ({
-      dictType: {
-        defaultValue: queryDataRef.current?.dictType,
-      },
-      dictCode: {
-        defaultValue: queryDataRef.current?.dictCode,
-      },
-      dictValue: {
-        defaultValue: queryDataRef.current?.dictValue,
-      },
-      dictState: {
-        defaultValue: queryDataRef.current?.dictState,
-      },
-    }),
 
-    [],
-  );
-
-  const store = useStore<FormType>(formConfigs);
+  const store = useStore<FormType>({
+    dictType: {
+      defaultValue: queryDataRef.current?.dictType,
+    },
+    dictCode: {
+      defaultValue: queryDataRef.current?.dictCode,
+    },
+    dictValue: {
+      defaultValue: queryDataRef.current?.dictValue,
+    },
+    dictState: {
+      defaultValue: queryDataRef.current?.dictState,
+    },
+  });
   const { Form, Item } = useForm(store);
   const columnDefs = useMemo<ColumnDefs>(() => {
     return [
