@@ -184,13 +184,9 @@ const CommonDict: React.FC<CommonDictProps> = props => {
                 htmlType="submit"
                 onClick={e => {
                   e.preventDefault();
-                  store.submit(({ values }) => {
-                    setQueryData(values);
-                    if (gridRef.current) {
-                      gridRef.current.fetch({
-                        page: 1,
-                      });
-                    }
+                  setQueryData(store.getValues());
+                  gridRef.current?.fetch({
+                    page: 1,
                   });
                 }}
               >
@@ -198,17 +194,16 @@ const CommonDict: React.FC<CommonDictProps> = props => {
               </Button>
               <Button
                 onClick={() => {
-                  store.setAllValues({});
                   setQueryData({});
-                  if (gridRef.current) {
-                    gridRef.current.fetch({
-                      page: 1,
-                    });
-                  }
+                  store.setAllValues(queryDataRef.current);
+                  gridRef.current?.fetch({
+                    page: 1,
+                  });
                 }}
               >
                 重置
               </Button>
+              g
               <Button
                 type="primary"
                 onClick={() => {
