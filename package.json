@@ -2,6 +2,7 @@
   "private": true,
   "scripts": {
     "start": "umi dev",
+    "template": "plop",
     "build": "cross-env UA=UA-154956873-2 umi build",
     "test": "umi test",
     "mock": "cross-env MOCK=true umi dev",
