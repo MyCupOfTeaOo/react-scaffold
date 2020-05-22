@@ -11,23 +11,23 @@ declare global {
     component?: string;
     title?: string;
     menuId?: string;
+    exact?: boolean;
     params?: { [key: string]: any };
     subPage?: SubPageConfig[];
   }
   interface PageConfig {
     menuId: string;
+    isMenu?: boolean;
     component?: string;
+    exact?: boolean;
     subPage?: SubPageConfig[];
   }
   interface Window
     extends EventTarget,
-      WindowTimers,
       WindowSessionStorage,
       WindowLocalStorage,
       WindowConsole,
       GlobalEventHandlers,
-      IDBEnvironment,
-      WindowBase64,
       AnimationFrameProvider,
       WindowOrWorkerGlobalScope,
       WindowEventHandlers {

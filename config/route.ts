@@ -52,7 +52,8 @@ function subPagesGen(subPage?: SubPageConfig[]): string {
           : undefined
       },
         url: '${item.url}',
-        isMenu: false,
+        isMenu: ${item.isMenu},
+        exact: ${item.exact},
         title: '${item.title || ''}',
         subPage: ${subPageStr}      
       }`;
@@ -77,6 +78,8 @@ const pagesStr: string = pages.reduce((memo, page) => {
   const temp = `{
     component: ${page.component ? componentStr : undefined},
     menuId: '${page.menuId}',
+    isMenu: ${page.isMenu},
+    exact: ${page.exact},
     subPage: ${subPageStr}
   }`;
   return memo.concat(temp, ',\n');

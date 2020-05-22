@@ -9,28 +9,21 @@ import NotFoundPage from '@/pages/404';
 import Loading from '@/components/Loading';
 import { AuthRoutes } from '../components/Authority/decorator';
 
-// export function unescapeHtmlText(s?: string) {
-//   if (!s) return s;
-//   return s.replace(/&[#a-z0-9]+?;/gi, m => {
-//     const c = entities[m];
-//     if (c) return c;
-//     if (m.match(/^&#[0-9]{1,4};$/i)) {
-//       return String.fromCharCode(
-//         parseInt(/^&#([0-9a-f]+);$/i.exec(m)?.[1] as any, 10),
-//       );
-//     }
-//     if (m.match(/^&#x[0-9a-f]{1,4};$/i)) {
-//       return String.fromCharCode(
-//         parseInt(/^&#x([0-9a-f]+);$/i.exec(m)?.[1] as any, 16),
-//       );
-//     }
-//     return m;
-//   });
-// }
-
 export const isInboundLink = /\S*:\/\/\S*/i;
 export const isComponentUrl = /^component:(?<com>\S+)\((?<arg>.*)\)path=(?<path>.+)/;
 /* eslint-disable prefer-destructuring,guard-for-in,no-restricted-syntax */
+
+export function joinPath(...path: string[]) {
+  return path.reduce((allPath, curPath) => {
+    if (allPath.charAt(allPath.length - 1) === '/') {
+      return allPath + curPath;
+    }
+    if (curPath.charAt(0) === '/') {
+      return allPath + curPath;
+    }
+    return `${allPath}/${curPath}`;
+  }, '');
+}
 
 export function safeParse(
   str: any,
@@ -123,6 +116,7 @@ export function GenSubRoutes(
         menuId: mid,
         component,
         path,
+        exact: item.exact,
         title: item.title,
         routes: subRoutes,
         isMenu: item.isMenu,
@@ -133,7 +127,7 @@ export function GenSubRoutes(
       Routes: item.title ? [Title, AuthRoutes] : [AuthRoutes],
       component: component || NotImplementPage,
       path,
-      exact: !isComponent,
+      exact: item.exact ?? !isComponent,
       title: item.title,
       menuId: mid,
       routes: subRoutes,
@@ -188,6 +182,7 @@ export function GenRoutes(
 
           return {
             isMenu: true,
+            exact: target?.exact,
             Routes:
               // 全部都是子路由才展示title
               routes.length === subRoutes.length + 2
@@ -207,7 +202,7 @@ export function GenRoutes(
             component,
             path,
             menuId: item.menuId,
-            exact: !isComponent,
+            exact: target?.exact ?? !isComponent,
             params,
             title: item.menuName,
             routes,
