@@ -1,10 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'umi/link';
 import { Menu as AMenu } from 'antd';
 import { GRoute } from '@/typings';
 import { isInboundLink } from '@/utils/utils';
-
-import rootStore from '@/stores';
 import { getToken } from '@/utils/authority';
 import './styles.scss';
 
@@ -80,13 +78,33 @@ export function getPathAllRoot(path: string): string[] {
     .splice(1);
 }
 
-export function getSelectPath(path: string): string {
-  if (Object.values(rootStore.global.menuId2Url).some(item => item === path)) {
+export function getUrlMap(
+  urlMap: { [key: string]: boolean } = {},
+  routes?: GRoute<{
+    [key: string]: any;
+  }>[],
+) {
+  routes?.forEach(route => {
+    // eslint-disable-next-line
+    if (route.path && route.isMenu) urlMap[route.path] = true;
+    getUrlMap(urlMap, route.routes);
+  });
+  return urlMap;
+}
+
+export function getSelectPath(
+  urlMap: { [key: string]: boolean } = {},
+  path: string,
+): string {
+  if (urlMap[path]) {
     return path;
   } else {
     const newPaths = path.split('/');
     if (newPaths.length < 2) return path;
-    return getSelectPath(newPaths.splice(0, newPaths.length - 1).join('/'));
+    return getSelectPath(
+      urlMap,
+      newPaths.splice(0, newPaths.length - 1).join('/'),
+    );
   }
 }
 
@@ -95,13 +113,16 @@ const Menu: React.FC<MenuType> = props => {
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const [rootSubmenuKeys, setRootSubmenuKeys] = useState<string[]>([]);
   const [item, setItem] = useState<JSX.Element[]>([]);
+  const urlMap = useMemo<{ [key: string]: boolean }>(() => {
+    return getUrlMap({}, props.routes);
+  }, [props.routes]);
   useEffect(() => {
     setRootSubmenuKeys(getAllRootPath(props.routes));
     setItem(menuItem(props.routes));
   }, [props.routes]);
   useEffect(() => {
     setOpenKeys(getPathAllRoot(props.path));
-    setSelectedKeys([getSelectPath(props.path)]);
+    setSelectedKeys([getSelectPath(urlMap, props.path)]);
   }, [props.path]);
 
   const onOpenChange = useCallback(
