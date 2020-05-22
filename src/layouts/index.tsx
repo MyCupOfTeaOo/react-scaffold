@@ -39,7 +39,7 @@ function dataGridRequest<T>(url: string, payload: RequestData<T>) {
   const promise = request.post(
     url,
     {
-      ...payload.queryData,
+      queryData: payload.queryData || {},
       sortColumns,
       len: payload.pageSize,
       page: payload.page,
