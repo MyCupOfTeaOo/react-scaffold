@@ -13,16 +13,18 @@ export const isInboundLink = /\S*:\/\/\S*/i;
 export const isComponentUrl = /^component:(?<com>\S+)\((?<arg>.*)\)path=(?<path>.+)/;
 /* eslint-disable prefer-destructuring,guard-for-in,no-restricted-syntax */
 
-export function joinPath(...path: string[]) {
-  return path.reduce((allPath, curPath) => {
-    if (allPath.charAt(allPath.length - 1) === '/') {
-      return allPath + curPath;
-    }
-    if (curPath.charAt(0) === '/') {
-      return allPath + curPath;
-    }
-    return `${allPath}/${curPath}`;
-  }, '');
+export function joinPath(...path: (string | undefined)[]) {
+  return path
+    .filter(p => p)
+    .reduce((allPath, curPath) => {
+      if (allPath?.charAt(allPath.length - 1) === '/') {
+        return allPath + curPath;
+      }
+      if (curPath?.charAt(0) === '/') {
+        return allPath + curPath;
+      }
+      return `${allPath}/${curPath}`;
+    }, '');
 }
 
 export function safeParse(
