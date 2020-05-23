@@ -47,6 +47,16 @@ export function getRouteList(
   }
 }
 
+export function downPath(
+  routes: TargetRoute[],
+  path: string,
+): TargetRoute | undefined {
+  const routerList = getRouteList(routes, path);
+  if (routerList) return routerList;
+  const paths = path.split('/');
+  return downPath(routes, paths.splice(0, paths.length - 1).join('/'));
+}
+
 export function filterFather(route?: TargetRoute): TargetRoute | undefined {
   if (
     route &&
@@ -90,7 +100,7 @@ export function getBreadCrumbMaps(
 const MyBreadcrumb: React.FC<BreadcrumbProps> = props => {
   const breadCrumbMaps = useMemo<BreadcrumbMap[]>(() => {
     const maps = getBreadCrumbMaps(
-      getRouteList(props.routes, props.location.pathname),
+      downPath(props.routes, props.location.pathname),
     ).filter(map => map.name);
     if (maps?.[0]?.path !== '/') {
       maps.unshift({
