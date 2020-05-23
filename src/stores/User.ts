@@ -1,5 +1,6 @@
 import { observable, action, flow } from 'mobx';
 import { message } from 'antd';
+import * as Sentry from '@sentry/browser';
 import { getCurUser } from '@/service/login';
 import { ReqResponse } from '@/utils/request';
 import { RootStore } from '.';
@@ -53,13 +54,14 @@ export default class User {
 
   @action
   setUser = (user: AuthType) => {
+    Sentry.setUser(user);
     this.user = user;
   };
 
   loadUser = flow(function*(this: User): any {
     const res = (yield getCurUser()) as ReqResponse<AuthType>;
     if (res.isSuccess) {
-      this.user = res.data;
+      this.setUser(res.data!);
     } else {
       message.error(res.msg);
     }

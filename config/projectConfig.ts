@@ -9,3 +9,4 @@ export const apiPrefix: string =
 export const copyright: string = `${new Date().getFullYear()} 南京全高信息科技有限公司出品`;
 export const UA = process.env.UA || 'UA-154956873-1';
 export const aes = process.env.AES || 'testt';
+export const dsn = process.env.DSN || undefined;

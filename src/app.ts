@@ -1,7 +1,14 @@
 import ReactGA from 'react-ga';
+import * as Sentry from '@sentry/browser';
 import { Location, Route } from '@/typings';
-import { UA } from '#/projectConfig';
+import { UA, dsn } from '#/projectConfig';
 import commit from './.commit';
+
+if (dsn) {
+  Sentry.init({
+    dsn,
+  });
+}
 
 /* eslint-disable no-console */
 

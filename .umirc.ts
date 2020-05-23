@@ -21,6 +21,7 @@ const config: IConfig = {
   define: {
     'process.env.UA': process.env.UA,
     'process.env.AES': process.env.AES,
+    'process.env.DSN': process.env.DSN,
   },
   autoprefixer: {
     browsers: [

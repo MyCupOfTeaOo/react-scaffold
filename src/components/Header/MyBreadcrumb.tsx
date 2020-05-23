@@ -54,7 +54,7 @@ export function downPath(
   const routerList = getRouteList(routes, path);
   if (routerList) return routerList;
   const paths = path.split('/');
-  return downPath(routes, paths.splice(0, paths.length - 1).join('/'));
+  if (paths.length > 1) return downPath(routes, paths.splice(0, paths.length - 1).join('/'));
 }
 
 export function filterFather(route?: TargetRoute): TargetRoute | undefined {

@@ -9,6 +9,7 @@ import { Registry as UploadRegistry } from 'teaness/es/Form/Components/Upload';
 import { Base64 } from 'js-base64';
 import { PictureView, BaseGrid } from 'teaness';
 import Axios from 'axios';
+import Boundary from '@/components/Boundary';
 import { RequestData, ResponseData } from 'teaness/es/DataGrid/typings';
 import { CancellablePromise } from 'teaness/es/typings';
 import stores from '@/stores';
@@ -163,13 +164,13 @@ const Layout: React.FC<RouteProps<
   }
 
   return (
-    <React.Fragment>
+    <Boundary>
       <ConfigProvider locale={zhCN}>
         <Provider {...stores}>
           <div className={styles.normal}>{props.children}</div>
         </Provider>
       </ConfigProvider>
-    </React.Fragment>
+    </Boundary>
   );
 };
 

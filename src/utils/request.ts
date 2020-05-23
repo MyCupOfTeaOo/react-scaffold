@@ -7,6 +7,7 @@ import axios, {
   AxiosPromise,
   AxiosInterceptorManager,
 } from 'axios';
+import * as Sentry from '@sentry/browser';
 import stores from '@/stores';
 import { stringify } from 'qs';
 import { apiPrefix } from '#/projectConfig';
@@ -71,6 +72,8 @@ const errorHandler = async (error: {
       respText ||
       codeMessage[response.status] ||
       response.statusText;
+    Sentry.setContext('response', response);
+    Sentry.captureException(errortext);
     return {
       code: response.status,
       msg: errortext,
