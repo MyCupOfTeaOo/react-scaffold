@@ -1,12 +1,9 @@
 import Axios, { CancelToken } from 'axios';
 import { UploadFile } from 'teaness/es/Form/Components/Upload/typings';
-import request, { ReqResponse } from '@/utils/request';
+import request from '@/utils/request';
 import { apiPrefix } from '#/projectConfig';
 
-export async function getFileInfoByUri(
-  uri: string,
-  cancelToken?: CancelToken,
-): Promise<ReqResponse> {
+export function getFileInfoByUri(uri: string, cancelToken?: CancelToken) {
   return request.post(
     `/file/getFileInfoByUri`,
     {},

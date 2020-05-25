@@ -1,17 +1,15 @@
-import request, { ReqResponse } from '@/utils/request';
+import request from '@/utils/request';
 import Axios, { CancelToken } from 'axios';
 
-export async function getGuestUid(): Promise<ReqResponse> {
+export function getGuestUid() {
   return request.get('/user/auth/getGuestUid');
 }
 
-export async function getMenuData(): Promise<ReqResponse> {
+export function getMenuData() {
   return request.get(`/permission/api/SysRole2menu/getMenus`);
 }
 
-export async function getRoleTreeList(
-  cancelToken?: CancelToken,
-): Promise<ReqResponse> {
+export function getRoleTreeList(cancelToken?: CancelToken) {
   return request.post(
     `/permission/api/SysRole/getRoleTreeList`,
     {},
@@ -43,7 +41,7 @@ export const loadRoleList = () => {
   return r;
 };
 
-export async function getOprs(menuId: string): Promise<ReqResponse> {
+export function getOprs(menuId: string) {
   return request.post(
     `/permission/api/SysRole2menu/getOprs`,
     {},

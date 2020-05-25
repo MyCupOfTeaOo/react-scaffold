@@ -1,8 +1,8 @@
-import request, { ReqResponse } from '@/utils/request';
+import request from '@/utils/request';
 import { enableState } from '@/constant';
 import Axios, { CancelToken } from 'axios';
 
-export async function findAllByDictTypeEnable(
+export function findAllByDictTypeEnable(
   dictType: string,
   cancelToken?: CancelToken,
   queryAll: boolean = false,
@@ -20,10 +20,7 @@ export async function findAllByDictTypeEnable(
   );
 }
 
-export async function switchCommonDict(
-  id: string,
-  enable: enableState,
-): Promise<ReqResponse> {
+export function switchCommonDict(id: string, enable: enableState) {
   return request.post(
     '/config/dict/common/switch',
     {},
@@ -36,7 +33,7 @@ export async function switchCommonDict(
   );
 }
 
-export async function getCommonDict(id: string): Promise<ReqResponse> {
+export function getCommonDict(id: string) {
   return request.post(
     '/config/dict/common/get',
     {},
@@ -48,15 +45,15 @@ export async function getCommonDict(id: string): Promise<ReqResponse> {
   );
 }
 
-export async function newCommonDict(): Promise<ReqResponse> {
+export function newCommonDict() {
   return request.get('/config/dict/common/new');
 }
 
-export async function addCommonDict(data: any): Promise<ReqResponse> {
+export function addCommonDict(data: any) {
   return request.post('/config/dict/common/add', data);
 }
 
-export async function updateCommonDict(data: any): Promise<ReqResponse> {
+export function updateCommonDict(data: any) {
   return request.post('/config/dict/common/update', data);
 }
 
@@ -84,22 +81,19 @@ export const loadDict = (dictType: string) => {
   };
 };
 
-export async function newCascadeDict(): Promise<ReqResponse> {
+export function newCascadeDict() {
   return request.get('/config/dict/cascade/new');
 }
 
-export async function addCascadeDict(data: any): Promise<ReqResponse> {
+export function addCascadeDict(data: any) {
   return request.post('/config/dict/cascade/add', data);
 }
 
-export async function updateCascadeDict(data: any): Promise<ReqResponse> {
+export function updateCascadeDict(data: any) {
   return request.post('/config/dict/cascade/update', data);
 }
 
-export async function switchCascadeDict(
-  id: string,
-  enable: enableState,
-): Promise<ReqResponse> {
+export function switchCascadeDict(id: string, enable: enableState) {
   return request.post(
     '/config/dict/cascade/switch',
     {},
@@ -112,7 +106,7 @@ export async function switchCascadeDict(
   );
 }
 
-export async function getCascadeDict(id: string): Promise<ReqResponse> {
+export function getCascadeDict(id: string) {
   return request.post(
     '/config/dict/cascade/get',
     {},
@@ -124,11 +118,11 @@ export async function getCascadeDict(id: string): Promise<ReqResponse> {
   );
 }
 
-export async function findByFather(
+export function findByFather(
   dictType: string,
   fatherCode?: string,
   cancelToken?: CancelToken,
-): Promise<ReqResponse> {
+) {
   return request.post(
     '/config/dict/cascade/findByFather',
     {},
@@ -142,11 +136,11 @@ export async function findByFather(
   );
 }
 
-export async function findAllCascaderByDictTypeEnable(
+export function findAllCascaderByDictTypeEnable(
   dictType: string,
   cancelToken?: CancelToken,
   queryAll: boolean = false,
-): Promise<ReqResponse> {
+) {
   return request.get('/config/dict/cascade/findByDictType', {
     params: {
       dictType,
@@ -156,11 +150,11 @@ export async function findAllCascaderByDictTypeEnable(
   });
 }
 
-export async function findCascaderByDictCodeAndDictType(
+export function findCascaderByDictCodeAndDictType(
   dictType: string,
   dictCode: string,
   cancelToken?: CancelToken,
-): Promise<ReqResponse> {
+) {
   return request.post(
     '/config/dict/cascade/findByDictCodeAndDictType',
     {},
