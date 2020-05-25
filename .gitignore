@@ -26,3 +26,6 @@
 
 # commit
 .commit.ts
+
+# sentry
+.sentryclirc

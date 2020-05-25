@@ -1,4 +1,5 @@
 import { IConfig } from 'umi-types';
+import SentryWebpackPlugin from '@sentry/webpack-plugin';
 import routes from './config/route';
 import proxy from './config/proxy';
 import theme from './config/theme';
@@ -7,6 +8,7 @@ import { projectName, baseUrl, publicPath } from './config/projectConfig';
 import './config/commit';
 
 const path = require('path');
+const fs = require('fs');
 
 // ref: https://umijs.org/config/
 const config: IConfig = {
@@ -34,6 +36,21 @@ const config: IConfig = {
   },
   alias: {
     '#': path.resolve(__dirname, 'config/'),
+  },
+  devtool: process.env.NODE_ENV === 'production' ? 'source-map' : undefined,
+  chainWebpack(memo) {
+    if (
+      process.env.NODE_ENV === 'production' &&
+      fs.existsSync('./.sentryclirc')
+    ) {
+      memo.plugin('sentry').use(SentryWebpackPlugin, [
+        {
+          include: './dist',
+          configFile: path.resolve(__dirname, '.sentryclirc'),
+          ignore: ['node_modules'],
+        },
+      ]);
+    }
   },
   plugins: [
     // ref: https://umijs.org/plugin/umi-plugin-react.html

@@ -29,10 +29,12 @@ export function onRouteChange({
   location: Location;
   routes: Route[];
 }) {
-  if (!action) {
-    ReactGA.initialize(UA);
-    ReactGA.pageview(location.pathname + location.search);
-  } else {
-    ReactGA.pageview(location.pathname + location.search);
+  if (UA) {
+    if (!action) {
+      ReactGA.initialize(UA);
+      ReactGA.pageview(location.pathname + location.search);
+    } else {
+      ReactGA.pageview(location.pathname + location.search);
+    }
   }
 }
