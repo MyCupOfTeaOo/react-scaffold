@@ -68,7 +68,7 @@ export function parseUrl(
       loader: () =>
         import(`../block/${(result.groups as { com: string }).com}`).then(
           block => {
-            return injectProps(arg)(block.default);
+            return injectProps(safeParse(arg))(block.default);
           },
         ),
       loading: Loading,
