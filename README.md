@@ -16,7 +16,8 @@
   - [5.1. 目录结构](#51-目录结构)
 - [6. 开发环境配置](#6-开发环境配置)
 - [7. 组件用例](#7-组件用例)
-- [8. 备注](#8-备注)
+- [8. 菜单动态加载组件](#8-菜单动态加载组件)
+- [9. 备注](#9-备注)
 
 <!-- /TOC -->
 
@@ -101,4 +102,11 @@ vscode settings 可以配上
 外网,需翻墙加速 [teaness.org](https://teaness.org/)
 内网,隐身模式访问 [teaness.org](http://teaness.org/)
 
-# 8. 备注
+# 8. 菜单动态加载组件
+
+通过特殊的 url 标识与菜单结合
+url 设计: `component:{block组件}({注入的组件props})path={url路径}`
+
+例:`component:AutoGenPage({"type": "cnt"})path=cnt`
+
+# 9. 备注

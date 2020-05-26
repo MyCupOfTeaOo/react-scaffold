@@ -112,7 +112,7 @@ const MyBreadcrumb: React.FC<BreadcrumbProps> = props => {
   const items = useMemo(() => {
     return breadCrumbMaps.map((breadCrumbMap, i) => (
       <Breadcrumb.Item key={breadCrumbMap.path}>
-        {i === breadCrumbMaps.length - 1 ? (
+        {i === breadCrumbMaps.length - 1 && i !== 0 ? (
           breadCrumbMap.name
         ) : i === 0 ? (
           <a

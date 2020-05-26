@@ -8,6 +8,7 @@ import NotImplementPage from '@/pages/501';
 import NotFoundPage from '@/pages/404';
 import Loading from '@/components/Loading';
 import { AuthRoutes } from '../components/Authority/decorator';
+import { injectProps } from './decorators';
 
 export const isInboundLink = /\S*:\/\/\S*/i;
 export const isComponentUrl = /^component:(?<com>\S+)\((?<arg>.*)\)path=(?<path>.+)/;
@@ -66,8 +67,8 @@ export function parseUrl(
     com = dynamic({
       loader: () =>
         import(`../block/${(result.groups as { com: string }).com}`).then(
-          func => {
-            return func.default(arg);
+          block => {
+            return injectProps(arg)(block.default);
           },
         ),
       loading: Loading,
