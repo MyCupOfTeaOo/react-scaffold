@@ -30,8 +30,9 @@ export interface MenuResponse {
   menuId: string;
   menuName: string;
   menuUrl: string;
-  menus?: MenuResponse[];
   params?: string;
+  isMenu?: boolean;
+  menus?: MenuResponse[];
 }
 
 export interface Route {

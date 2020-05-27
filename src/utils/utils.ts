@@ -184,7 +184,7 @@ export function GenRoutes(
           });
 
           return {
-            isMenu: true,
+            isMenu: item.isMenu ?? target?.isMenu ?? true,
             exact: target?.exact,
             Routes:
               // 全部都是子路由才展示title
@@ -200,7 +200,7 @@ export function GenRoutes(
           };
         } else {
           return {
-            isMenu: true,
+            isMenu: item.isMenu ?? target?.isMenu ?? true,
             Routes: [Title, AuthRoutes],
             component,
             path,
@@ -232,7 +232,7 @@ export function GenRoutes(
             isMenu: false,
           });
           return {
-            isMenu: true,
+            isMenu: item.isMenu ?? true,
             path,
             menuId: item.menuId,
             params,
@@ -241,7 +241,7 @@ export function GenRoutes(
           };
         } else {
           return {
-            isMenu: true,
+            isMenu: item.isMenu ?? true,
             Routes: [Title, AuthRoutes],
             component: NotImplementPage,
             path,
