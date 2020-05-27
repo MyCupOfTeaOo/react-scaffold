@@ -66,7 +66,7 @@ export function parseUrl(
     const arg = result.groups.arg;
     com = dynamic({
       loader: () =>
-        import(`../block/${(result.groups as { com: string }).com}`).then(
+        import(`../blocks/${(result.groups as { com: string }).com}`).then(
           block => {
             return injectProps(safeParse(arg))(block.default);
           },
