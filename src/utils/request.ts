@@ -6,6 +6,7 @@ import axios, {
   AxiosRequestConfig,
   AxiosPromise,
   AxiosInterceptorManager,
+  AxiosResponse,
 } from 'axios';
 import * as Sentry from '@sentry/browser';
 import stores from '@/stores';
@@ -43,6 +44,7 @@ export const codeMessage: { [n: number]: string } = {
 export interface ReqResponse<T = any> {
   msg: string;
   code: number;
+  response: AxiosResponse;
   isSuccess?: boolean;
   isCancel?: boolean;
   data?: T;
@@ -53,7 +55,7 @@ export type CancellablePromise<T> = Promise<T> & {
 };
 
 const errorHandler = async (error: {
-  response: Response;
+  response: AxiosResponse;
   message: string | undefined;
 }): Promise<ReqResponse> => {
   const { response, message } = error;
@@ -65,7 +67,7 @@ const errorHandler = async (error: {
         sysId: stores.global.sysId,
       })}`;
     }
-    const respText = await response.text?.();
+    const respText = await response.data?.msg;
     const respJson = safeParse(respText);
     const errortext =
       (respJson && (respJson.msg || respJson.message)) ||
@@ -74,19 +76,22 @@ const errorHandler = async (error: {
       response.statusText;
     Sentry.setContext('response', response);
     Sentry.captureException(errortext);
+
     return {
+      response,
       code: response.status,
       msg: errortext,
     };
   }
   return {
+    response,
     code: respCode.cancel,
     msg: message || '',
     isCancel: true,
   };
 };
 
-type AxiosResponse<T = any> = T;
+type MyResponse<T = any> = T;
 
 const request = axios.create({
   baseURL: `/${apiPrefix || ''}`,
@@ -96,39 +101,39 @@ const request = axios.create({
   defaults: AxiosRequestConfig;
   interceptors: {
     request: AxiosInterceptorManager<AxiosRequestConfig>;
-    response: AxiosInterceptorManager<AxiosResponse>;
+    response: AxiosInterceptorManager<MyResponse>;
   };
   getUri(config?: AxiosRequestConfig): string;
-  request<T = ReqResponse, R = AxiosResponse<T>>(
+  request<T = ReqResponse, R = MyResponse<T>>(
     config: AxiosRequestConfig,
   ): Promise<R>;
-  get<T = ReqResponse, R = AxiosResponse<T>>(
+  get<T = ReqResponse, R = MyResponse<T>>(
     url: string,
     config?: AxiosRequestConfig,
   ): Promise<R>;
-  delete<T = ReqResponse, R = AxiosResponse<T>>(
+  delete<T = ReqResponse, R = MyResponse<T>>(
     url: string,
     config?: AxiosRequestConfig,
   ): Promise<R>;
-  head<T = ReqResponse, R = AxiosResponse<T>>(
+  head<T = ReqResponse, R = MyResponse<T>>(
     url: string,
     config?: AxiosRequestConfig,
   ): Promise<R>;
-  options<T = ReqResponse, R = AxiosResponse<T>>(
+  options<T = ReqResponse, R = MyResponse<T>>(
     url: string,
     config?: AxiosRequestConfig,
   ): Promise<R>;
-  post<T = ReqResponse, R = AxiosResponse<T>>(
-    url: string,
-    data?: any,
-    config?: AxiosRequestConfig,
-  ): Promise<R>;
-  put<T = ReqResponse, R = AxiosResponse<T>>(
+  post<T = ReqResponse, R = MyResponse<T>>(
     url: string,
     data?: any,
     config?: AxiosRequestConfig,
   ): Promise<R>;
-  patch<T = ReqResponse, R = AxiosResponse<T>>(
+  put<T = ReqResponse, R = MyResponse<T>>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig,
+  ): Promise<R>;
+  patch<T = ReqResponse, R = MyResponse<T>>(
     url: string,
     data?: any,
     config?: AxiosRequestConfig,
@@ -146,9 +151,48 @@ request.interceptors.request.use(config => {
 });
 request.interceptors.response.use(response => {
   return {
+    response,
     ...response.data,
     isSuccess: response.data?.code === respCode.success,
   };
 }, errorHandler);
+
+export function download<T = any>(
+  response: AxiosResponse,
+  filename?: string,
+): ReqResponse<T> {
+  const disposition = (response.headers as any)['content-disposition'];
+  if (disposition) {
+    const sourceFilename = /filename=(?<filename>[^;]+)/.exec(disposition)
+      ?.groups?.filename;
+    if (sourceFilename) {
+      const a = document.createElement('a');
+      const turl = window.URL.createObjectURL(response.data);
+      a.href = turl;
+      a.download = filename || sourceFilename;
+      a.click();
+      window.URL.revokeObjectURL(turl);
+      return {
+        msg: '下载成功',
+        code: respCode.success,
+        isSuccess: true,
+        response,
+      };
+    }
+    return {
+      msg: '文件名为空',
+      code: 400,
+      isSuccess: false,
+      response,
+    };
+  } else {
+    return {
+      msg: response.data.msg,
+      code: response.data.code,
+      isSuccess: false,
+      response,
+    };
+  }
+}
 
 export default request;
