@@ -8,7 +8,7 @@
     "mock": "cross-env MOCK=true umi dev",
     "unmock": "cross-env MOCK=none umi dev",
     "lint:es": "eslint --ext .js src mock tests",
-    "lint:ts": "tslint \"src/**/*.ts\" \"src/**/*.tsx\"",
+    "lint:ts": "eslint --ext .ts,.tsx src",
     "lint:fix": "eslint --fix --cache --ext .js,.jsx,.ts,.tsx --format=pretty ./src",
     "lint-staged": "lint-staged",
     "lint-staged:js": "eslint --ext .js,.jsx,.ts,.tsx ./src",
