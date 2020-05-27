@@ -61,7 +61,7 @@ const errorHandler = async (error: {
     if (response.status === 403) {
       stores.user.clearUser();
       clearToken();
-      window.location.href = `/sign/signIn'}?${stringify({
+      window.location.href = `/sign/signIn?${stringify({
         sysId: stores.global.sysId,
       })}`;
     }
