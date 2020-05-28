@@ -102,6 +102,16 @@ type GetResponseType<T extends Promise<ReqResponse<any>>> = T extends Promise<
   ? R
   : any;
 
+export function useMound() {
+  const mound = useRef(true);
+  useEffect(() => {
+    return () => {
+      mound.current = false;
+    };
+  }, []);
+  return mound;
+}
+
 export function useRequest<
   T extends any = any,
   F extends (...args: any) => Promise<ReqResponse<T>> = (
@@ -114,7 +124,7 @@ export function useRequest<
     showSuccess?: boolean;
     showError?: boolean;
     cancel?: () => void;
-    autoFirst?: boolean;
+    first?: boolean;
     onSuccess?: (args: GetResponseType<ReturnType<F>>) => void;
     onError?: (args: GetResponseType<ReturnType<F>>) => void;
   } = {},
@@ -122,22 +132,26 @@ export function useRequest<
 ) {
   const {
     showError = true,
-    showSuccess = !options.autoFirst,
+    showSuccess = !options.first,
     cancel,
-    autoFirst,
+    first,
     onSuccess,
     onError,
   } = options;
-  const [count, setCount] = useState(autoFirst ? 1 : 0);
+  const mound = useMound();
+  const [count, setCount] = useState(first ? 1 : 0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
   const [success, setSuccess] = useState<string>();
   const [data, setData] = useState<GetResponseDataType<ReturnType<F>>>();
   const paramsRef = useRef<Parameters<F> | undefined>(options.params);
-  const run = useCallback((p?: Parameters<F>) => {
+  const run = useCallback((...p: Parameters<F>) => {
     paramsRef.current = p;
     setCount(prevCount => prevCount + 1);
   }, []);
+  const reload = useCallback(() => {
+    setCount(prevCount => prevCount + 1);
+  }, [run]);
   useEffect(() => {
     paramsRef.current = options.params;
   }, deps || []);
@@ -176,7 +190,7 @@ export function useRequest<
         }
       })
       .finally(() => {
-        setLoading(false);
+        if (mound.current) setLoading(false);
       });
     return cancel;
   }, [count, ...(deps || [])]);
@@ -188,6 +202,7 @@ export function useRequest<
     error,
     run,
     paramsRef,
+    reload,
   };
 }
 
