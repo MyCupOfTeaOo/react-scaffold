@@ -38,10 +38,10 @@ function push404(elements: IRoute[]): void {
 }
 push404(routes);
 
-function subPagesGen(subPage?: SubPageConfig[]): string {
-  if (Array.isArray(subPage)) {
-    const temp1 = subPage.reduce((memo, item) => {
-      const subPageStr = subPagesGen(item.subPage);
+function subPagesGen(routes?: RouteConfig[]): string {
+  if (Array.isArray(routes)) {
+    const temp1 = routes.reduce((memo, item) => {
+      const subPageStr = subPagesGen(item.routes);
       const temp2 = `{
       component: ${
         item.component
@@ -57,7 +57,7 @@ function subPagesGen(subPage?: SubPageConfig[]): string {
         isMenu: ${item.isMenu},
         exact: ${item.exact},
         title: '${item.title || ''}',
-        subPage: ${subPageStr}      
+        routes: ${subPageStr}      
       }`;
       return memo.concat(temp2, ',\n');
     }, '');
@@ -72,7 +72,7 @@ pages.push(
   ...blockConfigPaths.map(item => require(path.resolve(item)).default),
 );
 const pagesStr: string = pages.reduce((memo, page) => {
-  const subPageStr = subPagesGen(page.subPage);
+  const subPageStr = subPagesGen(page.routes);
   const componentStr = `
   __IS_BROWSER
   ? dynamic({
@@ -86,7 +86,7 @@ const pagesStr: string = pages.reduce((memo, page) => {
     menuId: '${page.menuId}',
     isMenu: ${page.isMenu},
     exact: ${page.exact},
-    subPage: ${subPageStr}
+    routes: ${subPageStr}
   }`;
   return memo.concat(temp, ',\n');
 }, '');

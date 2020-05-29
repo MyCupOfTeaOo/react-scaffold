@@ -87,12 +87,12 @@ export function parseUrl(
 }
 
 export function GenSubRoutes(
-  subPage: SubPageConfig[],
+  routes: RouteConfig[],
   rootPath: string,
   menuId?: string,
   params?: { [key: string]: any },
 ): GRoute[] {
-  return subPage.map(item => {
+  return routes.map(item => {
     const mid = menuId || item.menuId;
     const p = params || item.params;
     const { path, component, isComponent } = parseUrl(
@@ -101,8 +101,8 @@ export function GenSubRoutes(
       rootPath,
     );
     let subRoutes: GRoute[] = [];
-    if (Array.isArray(item.subPage)) {
-      subRoutes = GenSubRoutes(item.subPage, path, mid, p);
+    if (Array.isArray(item.routes)) {
+      subRoutes = GenSubRoutes(item.routes, path, mid, p);
     }
     if (subRoutes.length > 0) {
       subRoutes.push({
@@ -166,8 +166,8 @@ export function GenRoutes(
           }
         }
         let subRoutes = [];
-        if (target && Array.isArray(target.subPage)) {
-          subRoutes = GenSubRoutes(target.subPage, path, item.menuId, params);
+        if (target && Array.isArray(target.routes)) {
+          subRoutes = GenSubRoutes(target.routes, path, item.menuId, params);
           routes.push(...subRoutes);
         }
         // 有子菜单

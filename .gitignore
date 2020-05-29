@@ -29,3 +29,6 @@
 
 # sentry
 .sentryclirc
+
+# local
+.local.env

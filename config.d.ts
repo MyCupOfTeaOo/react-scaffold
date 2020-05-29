@@ -5,7 +5,7 @@ declare global {
   type ToAny<T> = {
     [P in keyof T]: any;
   };
-  interface SubPageConfig {
+  interface RouteConfig {
     url: string;
     isMenu?: boolean;
     component?: string;
@@ -13,14 +13,14 @@ declare global {
     menuId?: string;
     exact?: boolean;
     params?: { [key: string]: any };
-    subPage?: SubPageConfig[];
+    routes?: RouteConfig[];
   }
   interface PageConfig {
     menuId: string;
     isMenu?: boolean;
     component?: string;
     exact?: boolean;
-    subPage?: SubPageConfig[];
+    routes?: RouteConfig[];
   }
   interface Window
     extends EventTarget,
