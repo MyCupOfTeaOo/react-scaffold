@@ -6,7 +6,7 @@ declare global {
     [P in keyof T]: any;
   };
   interface RouteConfig {
-    url: string;
+    path: string;
     isMenu?: boolean;
     component?: string;
     title?: string;
