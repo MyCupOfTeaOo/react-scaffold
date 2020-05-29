@@ -53,7 +53,7 @@ function subPagesGen(routes?: RouteConfig[]): string {
         : require('${item.component}').default`
           : undefined
       },
-        url: '${item.url}',
+        url: '${item.path}',
         isMenu: ${item.isMenu},
         exact: ${item.exact},
         title: '${item.title || ''}',

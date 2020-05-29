@@ -96,7 +96,7 @@ export function GenSubRoutes(
     const mid = menuId || item.menuId;
     const p = params || item.params;
     const { path, component, isComponent } = parseUrl(
-      item.url,
+      item.path,
       item.component,
       rootPath,
     );

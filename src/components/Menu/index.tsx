@@ -99,11 +99,11 @@ export function getSelectPath(
   if (urlMap[path]) {
     return path;
   } else {
-    const newPaths = path.split('/');
+    const newPaths = path.replace(/\//g, '//').split(/\/(?!\/)/g);
     if (newPaths.length < 2) return path;
     return getSelectPath(
       urlMap,
-      newPaths.splice(0, newPaths.length - 1).join('/'),
+      newPaths.splice(0, newPaths.length - 1).join(''),
     );
   }
 }
