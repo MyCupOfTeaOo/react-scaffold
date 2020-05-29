@@ -99,7 +99,7 @@ export function getSelectPath(
   if (urlMap[path]) {
     return path;
   } else {
-    const newPaths = path.replace(/\//g, '//').split(/\/(?!\/)/g);
+    const newPaths = path.replace(/\/(?!^)/g, '//').split(/\/(?!\/)/g);
     if (newPaths.length < 2) return path;
     return getSelectPath(
       urlMap,
