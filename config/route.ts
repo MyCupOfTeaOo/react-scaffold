@@ -53,7 +53,7 @@ function subPagesGen(routes?: RouteConfig[]): string {
         : require('${item.component}').default`
           : undefined
       },
-        url: '${item.path}',
+        path: '${item.path}',
         isMenu: ${item.isMenu},
         exact: ${item.exact},
         title: '${item.title || ''}',
@@ -69,7 +69,10 @@ function subPagesGen(routes?: RouteConfig[]): string {
 // 自动查找区块配置
 const blockConfigPaths = glob.sync('src/pages/**/config.page.ts');
 pages.push(
-  ...blockConfigPaths.map(item => require(path.resolve(item)).default),
+  ...blockConfigPaths.map(item => {
+    delete require.cache[path.resolve(item)];
+    return require(path.resolve(item)).default;
+  }),
 );
 const pagesStr: string = pages.reduce((memo, page) => {
   const subPageStr = subPagesGen(page.routes);

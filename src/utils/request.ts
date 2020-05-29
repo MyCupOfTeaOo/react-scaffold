@@ -140,6 +140,70 @@ const request = axios.create({
   ): Promise<R>;
 };
 
+export const coreRequest = axios.create({
+  baseURL: `/${apiPrefix || ''}`,
+}) as {
+  (config: AxiosRequestConfig): AxiosPromise;
+  (url: string, config?: AxiosRequestConfig): AxiosPromise;
+  defaults: AxiosRequestConfig;
+  interceptors: {
+    request: AxiosInterceptorManager<AxiosRequestConfig>;
+    response: AxiosInterceptorManager<MyResponse>;
+  };
+  getUri(config?: AxiosRequestConfig): string;
+  request<T = ReqResponse, R = MyResponse<T>>(
+    config: AxiosRequestConfig,
+  ): Promise<R>;
+  get<T = ReqResponse, R = MyResponse<T>>(
+    url: string,
+    config?: AxiosRequestConfig,
+  ): Promise<R>;
+  delete<T = ReqResponse, R = MyResponse<T>>(
+    url: string,
+    config?: AxiosRequestConfig,
+  ): Promise<R>;
+  head<T = ReqResponse, R = MyResponse<T>>(
+    url: string,
+    config?: AxiosRequestConfig,
+  ): Promise<R>;
+  options<T = ReqResponse, R = MyResponse<T>>(
+    url: string,
+    config?: AxiosRequestConfig,
+  ): Promise<R>;
+  post<T = ReqResponse, R = MyResponse<T>>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig,
+  ): Promise<R>;
+  put<T = ReqResponse, R = MyResponse<T>>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig,
+  ): Promise<R>;
+  patch<T = ReqResponse, R = MyResponse<T>>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig,
+  ): Promise<R>;
+};
+coreRequest.interceptors.request.use(config => {
+  return {
+    ...config,
+    headers: {
+      token: getToken(),
+      ...config.headers,
+    },
+  };
+});
+coreRequest.interceptors.response.use(response => {
+  if (response.data?.code !== respCode.success) {
+    return Promise.reject(Error(response.data.msg));
+  }
+  return {
+    ...response.data?.data,
+  };
+});
+
 request.interceptors.request.use(config => {
   return {
     ...config,
