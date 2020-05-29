@@ -220,6 +220,9 @@ html {
 .ant-layout-content {
   height: 100%;
   display: flex;
+  & > * {
+    flex: auto;
+  }
 }
 
 .search-layout {

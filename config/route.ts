@@ -1,5 +1,7 @@
 import { IRoute } from 'umi-types';
 import * as fs from 'fs';
+import glob from 'glob';
+import path from 'path';
 import pages from './pages';
 
 const routes: IRoute[] = [
@@ -64,7 +66,11 @@ function subPagesGen(subPage?: SubPageConfig[]): string {
     return `[]`;
   }
 }
-
+// 自动查找区块配置
+const blockConfigPaths = glob.sync('src/pages/**/config.page.ts');
+pages.push(
+  ...blockConfigPaths.map(item => require(path.resolve(item)).default),
+);
 const pagesStr: string = pages.reduce((memo, page) => {
   const subPageStr = subPagesGen(page.subPage);
   const componentStr = `
