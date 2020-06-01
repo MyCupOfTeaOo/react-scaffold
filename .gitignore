@@ -31,4 +31,4 @@
 .sentryclirc
 
 # local
-.local.env
+.env.local
