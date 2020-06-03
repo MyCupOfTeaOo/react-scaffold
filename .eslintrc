@@ -44,7 +44,10 @@
       }
     ],
     "linebreak-style": 0,
-    "no-underscore-dangle": ["error", { "allow": ["_id"] }],
+    "no-underscore-dangle": [
+      "error",
+      { "allow": ["_id"], "allowAfterThis": true }
+    ],
     // Too restrictive, writing ugly code to defend against a very unlikely scenario: https://eslint.org/docs/rules/no-prototype-builtins
     "no-prototype-builtins": "off",
     "import/prefer-default-export": "off",

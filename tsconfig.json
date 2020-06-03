@@ -26,6 +26,12 @@
     "webpack",
     "jest",
     "tslint:latest",
-    "tslint-config-prettier"
+    "tslint-config-prettier",
+    "**/fixtures",
+    "**/*.test.ts",
+    "**/__tests__",
+    "**/*.spec.ts",
+    "mock",
+    "**/*._mock.ts"
   ]
 }
