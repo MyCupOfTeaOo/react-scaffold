@@ -67,7 +67,7 @@ function subPagesGen(routes?: RouteConfig[]): string {
   }
 }
 // 自动查找区块配置
-const blockConfigPaths = glob.sync('src/pages/**/config.page.ts');
+const blockConfigPaths = glob.sync('src/pages/**/config.page.json');
 pages.push(
   ...blockConfigPaths.map(item => {
     delete require.cache[path.resolve(item)];
