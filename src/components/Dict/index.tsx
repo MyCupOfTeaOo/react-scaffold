@@ -8,7 +8,7 @@ import {
 } from 'antd/lib/cascader';
 import { getChildDict, Dict } from '@/service/config';
 
-interface DictProps extends Omit<CascaderProps, 'options'> {
+export interface DictSelectProps extends Omit<CascaderProps, 'options'> {
   options?: CascaderOptionType[];
   /**
    * @throws 不要使用,预留给useDict的接口
@@ -34,7 +34,11 @@ export function dealWithDict(
   return options;
 }
 
-const DictSelect: React.FC<DictProps> = ({ options, hookLoad, ...rest }) => {
+const DictSelect: React.FC<DictSelectProps> = ({
+  options,
+  hookLoad,
+  ...rest
+}) => {
   const isChange = useValue(false);
   const dictOptions = useValue<CascaderOptionType[]>([]);
 
@@ -102,31 +106,32 @@ export function getSelectedOptions(
  *
  *示例如下
 const Test: React.FC<any> = () => {
-  const labelOptions = useDict('服务名', '字典类型');
+  const config = useDict('服务名', '字典类型');
   return (
     <div>
-      <DictSelect options={labelOptions} />
+      <DictSelect {...config} />
     </div>
   );
 };
 
 需要按需加载则:
 const Test: React.FC<any> = () => {
-  const labelOptions = useDict('服务名', '字典类型', {loadOnDemand: true});
+  const config = useDict('服务名', '字典类型', {loadOnDemand: true});
   return (
     <div>
-      <DictSelect options={labelOptions} />
+      <DictSelect {...config} />
     </div>
   );
 };
+
 
  * 该hook可以节约请求资源(当页面有多个相同的Dict时),所以不要担心资源重复加载问题
  * @param server 服务名
  * @param dictType 字典类型
  */
 export function useDict(
-  server: string,
-  dictType: string,
+  server?: string,
+  dictType?: string,
   /**
    * {loadOnDemand} 按需加载 只能在第一次传入生效
    * 按需加载 虽然节省了服务端加载资源,但是会消耗浏览器的性能用来遍历,如果造成了卡顿,建议关掉
@@ -134,7 +139,7 @@ export function useDict(
    * {maxDepth} 最大深度,可以指定查到某一级则不加载
    */
   options?: { loadOnDemand?: boolean; rootCode?: string[]; maxDepth?: number },
-): DictProps {
+): DictSelectProps {
   const dictOptions = useValue<CascaderOptionType[]>([]);
   const cancelSet = useRef(new Set<() => void>());
   // 代加载的字典编码,含分隔符 -
@@ -143,6 +148,7 @@ export function useDict(
   const loadData = useCallback(
     (selectedOptions: CascaderOptionType[] | undefined) => {
       if (!selectedOptions) return Promise.resolve(false);
+      if (!server || !dictType) return Promise.resolve(false);
       const targetOption = selectedOptions[selectedOptions.length - 1];
       // 正在加载中
       if (targetOption.loading) {
@@ -175,7 +181,7 @@ export function useDict(
         });
       });
     },
-    [options?.maxDepth],
+    [options?.maxDepth, server, dictType],
   );
   // code是带分隔符的
   const depthLoad = useCallback((code: string) => {
@@ -229,6 +235,7 @@ export function useDict(
     // 不需要此处删除waitLoads
   }, []);
   useEffect(() => {
+    if (!server || !dictType) return;
     const req = getChildDict(
       server,
       dictType,
@@ -268,7 +275,7 @@ export function useDict(
     return () => {
       cancelSet.current.forEach(cancel => cancel());
     };
-  }, [dictType, server, options?.rootCode]);
+  }, [dictType, server, options?.rootCode?.join('-'), options?.maxDepth]);
 
   const hookLoad = useCallback((value: CascaderValueType) => {
     if (!options?.loadOnDemand) {

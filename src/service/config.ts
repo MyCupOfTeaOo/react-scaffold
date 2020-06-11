@@ -38,3 +38,12 @@ export function getChildDict(
   req.cancel = source.cancel;
   return req;
 }
+
+export function getDictTypes(server: string) {
+  const source = Axios.CancelToken.source();
+  const req = request.get(`/${server}/dictTypes`, {
+    cancelToken: source.token,
+  }) as CancellablePromise<ReqResponse<Dict[]>>;
+  req.cancel = source.cancel;
+  return req;
+}
