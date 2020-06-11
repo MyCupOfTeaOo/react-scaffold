@@ -195,13 +195,19 @@ coreRequest.interceptors.request.use(config => {
   };
 });
 coreRequest.interceptors.response.use(response => {
-  if (response.data?.code !== respCode.success) {
-    return Promise.reject(Error(response.data.msg));
-  }
   return {
-    ...response.data?.data,
+    ...response.data,
+    response,
   };
 }, errorHandler);
+coreRequest.interceptors.response.use(response => {
+  if (response.code !== respCode.success) {
+    return Promise.reject(Error(response.msg));
+  }
+  return {
+    ...response.data,
+  };
+});
 
 request.interceptors.request.use(config => {
   return {
