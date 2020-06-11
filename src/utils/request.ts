@@ -12,7 +12,6 @@ import * as Sentry from '@sentry/browser';
 import stores from '@/stores';
 import { stringify } from 'qs';
 import { apiPrefix } from '#/projectConfig';
-import { safeParse } from './utils';
 import { getToken, clearToken } from './authority';
 
 export enum respCode {
@@ -67,11 +66,11 @@ const errorHandler = async (error: {
         sysId: stores.global.sysId,
       })}`;
     }
-    const respText = await response.data?.msg;
-    const respJson = safeParse(respText);
     const errortext =
-      (respJson && (respJson.msg || respJson.message)) ||
-      respText ||
+      response.data?.msg ||
+      response.data?.message ||
+      response.data?.error ||
+      (typeof response.data === 'string' && response.data) ||
       codeMessage[response.status] ||
       response.statusText;
     Sentry.setContext('response', response);
@@ -202,7 +201,7 @@ coreRequest.interceptors.response.use(response => {
   return {
     ...response.data?.data,
   };
-});
+}, errorHandler);
 
 request.interceptors.request.use(config => {
   return {
