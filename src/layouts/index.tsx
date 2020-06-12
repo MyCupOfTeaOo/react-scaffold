@@ -5,9 +5,8 @@ import DataGridRegister from 'teaness/es/DataGrid/DataGridRegister';
 import zhCN from 'antd/es/locale/zh_CN';
 import defaultLocale from 'antd/es/locale/default';
 import router from 'umi/router';
-import { Registry as UploadRegistry } from 'teaness/es/Form/Components/Upload';
 import { Base64 } from 'js-base64';
-import { PictureView, BaseGrid } from 'teaness';
+import { PictureView, BaseGrid, Upload } from 'teaness';
 import Axios from 'axios';
 import Boundary from '@/components/Boundary';
 import { RequestData, ResponseData } from 'teaness/es/DataGrid/typings';
@@ -78,40 +77,43 @@ BaseGrid.defaultProps = {
 DataGridRegister.request = dataGridRequest;
 DataGridRegister.router = router;
 DataGridRegister.defaultPageSize = 20;
-UploadRegistry.getFileInfo = getFileInfo;
-UploadRegistry.onUpload = uploadFile;
-UploadRegistry.onDownLoad = file => {
-  if (/image\/.*/.test(file.type)) {
-    if (file.originFileObj) {
-      const reader = new FileReader();
-      reader.onload = e => {
-        PictureView({
-          src: e.target?.result as string,
-        });
-      };
-      reader.readAsDataURL(file.originFileObj);
-    } else {
-      PictureView({
-        src: file.thumbUrl || file.url,
-      });
-    }
-  } else if (file.originFileObj) {
-    Modal.error({
-      content: '暂未上传,上传后可查看',
+Upload.defaultProps = {
+  ...Upload.defaultProps,
+  onUpload: uploadFile,
+  onPreview: file => {
+    PictureView({
+      src: file.thumbUrl || file.url,
     });
-  } else if (file.type === 'application/pdf') {
-    window.open(
-      `/${apiPrefix}/file/previewFileByUri?uri=${file.uid}`,
-      '_blank',
-    );
-  } else {
-    window.open(file.thumbUrl || file.url);
-  }
-};
-UploadRegistry.onPreview = file => {
-  PictureView({
-    src: file.thumbUrl || file.url,
-  });
+  },
+  getFile: getFileInfo,
+  onDownLoad: file => {
+    if (/image\/.*/.test(file.type)) {
+      if (file.originFileObj) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          PictureView({
+            src: e.target?.result as string,
+          });
+        };
+        reader.readAsDataURL(file.originFileObj);
+      } else {
+        PictureView({
+          src: file.thumbUrl || file.url,
+        });
+      }
+    } else if (file.originFileObj) {
+      Modal.error({
+        content: '暂未上传,上传后可查看',
+      });
+    } else if (file.type === 'application/pdf') {
+      window.open(
+        `/${apiPrefix}/file/previewFileByUri?uri=${file.uid}`,
+        '_blank',
+      );
+    } else {
+      window.open(file.thumbUrl || file.url);
+    }
+  },
 };
 
 const Layout: React.FC<RouteProps<
