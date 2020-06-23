@@ -61,7 +61,7 @@ export default class User {
   loadUser = flow(function*(this: User): any {
     const res = (yield getCurUser()) as ReqResponse<AuthType>;
     if (res.isSuccess) {
-      this.setUser(res.data!);
+      this.setUser(res.data as AuthType);
     } else {
       message.error(res.msg);
     }

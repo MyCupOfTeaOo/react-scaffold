@@ -3,7 +3,7 @@
   "scripts": {
     "start": "umi dev",
     "template": "plop",
-    "build": "cross-env umi build",
+    "build": "cross-env umi build && rimraf ./dist/*.js.map ./dist/*.css.map",
     "test": "umi test",
     "mock": "cross-env MOCK=true umi dev",
     "unmock": "cross-env MOCK=none umi dev",
