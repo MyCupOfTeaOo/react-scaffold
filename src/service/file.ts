@@ -1,5 +1,5 @@
 import Axios, { CancelToken } from 'axios';
-import { UploadFile } from 'teaness/es/Form/Components/Upload/typings';
+import { UploadFile } from 'antd/lib/upload/interface';
 import request from '@/utils/request';
 import { apiPrefix } from '#/projectConfig';
 
@@ -9,9 +9,6 @@ export function getFileInfoByUri(uri: string, cancelToken?: CancelToken) {
     {},
     {
       params: { uri },
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-      },
       cancelToken,
     },
   );
