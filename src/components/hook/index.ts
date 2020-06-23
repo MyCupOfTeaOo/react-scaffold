@@ -162,7 +162,7 @@ export function useRequest<
       .then(res => {
         if (res.isSuccess) {
           setSuccess(res.msg);
-          setData(res.data);
+          setData(res.data as any);
           if (showSuccess) {
             message.success(res.msg);
           }
