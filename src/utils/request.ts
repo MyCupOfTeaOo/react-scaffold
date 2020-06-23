@@ -195,6 +195,9 @@ coreRequest.interceptors.request.use(config => {
   };
 });
 coreRequest.interceptors.response.use(response => {
+  if (response.config.responseType === 'blob') {
+    return download(response, '未知文件');
+  }
   return {
     ...response.data,
     response,
@@ -232,13 +235,14 @@ export function download<T = any>(
 ): ReqResponse<T> {
   const disposition = (response.headers as any)['content-disposition'];
   if (disposition) {
-    const sourceFilename = /filename=(?<filename>[^;]+)/.exec(disposition)
-      ?.groups?.filename;
+    const sourceFilename =
+      /filename=(?<filename>[^;]+)/.exec(disposition)?.groups?.filename ||
+      filename;
     if (sourceFilename) {
       const a = document.createElement('a');
       const turl = window.URL.createObjectURL(response.data);
       a.href = turl;
-      a.download = filename || sourceFilename;
+      a.download = sourceFilename;
       a.click();
       window.URL.revokeObjectURL(turl);
       return {
