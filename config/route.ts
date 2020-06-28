@@ -71,7 +71,7 @@ const blockConfigPaths = glob.sync('src/pages/**/config.page.json');
 pages.push(
   ...blockConfigPaths.map(item => {
     delete require.cache[path.resolve(item)];
-    return require(path.resolve(item)).default;
+    return require(path.resolve(item));
   }),
 );
 const pagesStr: string = pages.reduce((memo, page) => {
