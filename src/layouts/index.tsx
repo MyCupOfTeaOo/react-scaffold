@@ -29,7 +29,11 @@ Modal.defaultProps = {
 } as any;
 // fix show english
 Object.assign(defaultLocale, zhCN);
-function dataGridRequest<T>(url: string, payload: RequestData<T>) {
+function dataGridRequest<T>(
+  url: string,
+  payload: RequestData<T>,
+  options?: { headers: any },
+) {
   const sortColumns = payload.sorters?.map(sorter => ({
     columnOrder: sorter.sort,
     columnProp: sorter.colId,
@@ -46,6 +50,7 @@ function dataGridRequest<T>(url: string, payload: RequestData<T>) {
     },
     {
       cancelToken,
+      headers: options?.headers,
     },
   ) as Promise<ReqResponse>;
   const t = promise.then(res => {
