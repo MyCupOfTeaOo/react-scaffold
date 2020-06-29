@@ -11,7 +11,8 @@
 - [2. 概述](#2-概述)
 - [3. 安装与运行](#3-安装与运行)
 - [4. 构建与发布](#4-构建与发布)
-  - [4.1. 环境变量](#41-环境变量)
+  - [4.1. 构建环境变量](#41-构建环境变量)
+  - [4.2. 其他环境变量](#42-其他环境变量)
 - [5. 项目结构](#5-项目结构)
   - [5.1. 目录结构](#51-目录结构)
 - [6. 开发环境配置](#6-开发环境配置)
@@ -36,11 +37,17 @@
 > 执行 `npm run build`
 > 如有 `sentry` 启用需求,需要在项目下添加 `.sentryclirc` 文件,具体文件格式请参照 `sentry` 官网文档
 
-## 4.1. 环境变量
+## 4.1. 构建环境变量
 
 - `UA` google analytics,默认无(不开启 google analytics)
 - `AES` AES 秘钥,默认 test
 - `DSN` sentry DNS,默认无(不开启 sentry)
+
+## 4.2. 其他环境变量
+
+可以建一个 `.env.local` 覆盖 umi 环境变量
+
+具体参考[umi 环境变量](https://v2.umijs.org/zh/guide/env-variables.html#%E5%A6%82%E4%BD%95%E9%85%8D%E7%BD%AE)
 
 # 5. 项目结构
 
@@ -110,3 +117,5 @@ url 设计: `component:{block组件}({注入的组件props})path={url路径}`
 例:`component:AutoGenPage({"type": "cnt"})path=cnt`
 
 # 9. 备注
+
+> 默认是开启 mock 的,需要关闭,请创建`.env.local`文件,并添加 `mock=none`
