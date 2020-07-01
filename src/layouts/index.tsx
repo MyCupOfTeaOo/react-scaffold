@@ -86,12 +86,6 @@ Upload.defaultProps = {
   ...Upload.defaultProps,
   onUpload: uploadFile,
   onPreview: file => {
-    PictureView({
-      src: file.thumbUrl || file.url,
-    });
-  },
-  getFile: getFileInfo,
-  onDownLoad: file => {
     if (/image\/.*/.test(file.type)) {
       if (file.originFileObj) {
         const reader = new FileReader();
@@ -118,6 +112,10 @@ Upload.defaultProps = {
     } else {
       window.open(file.thumbUrl || file.url);
     }
+  },
+  getFile: getFileInfo,
+  onDownload: file => {
+    window.open(file.thumbUrl || file.url);
   },
 };
 
