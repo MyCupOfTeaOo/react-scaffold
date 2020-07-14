@@ -1,18 +1,20 @@
 {
+  "name": "react-scaffold",
+  "version": "1.0.0",
+  "author": "tea",
   "private": true,
+  "description": "react手脚架",
   "scripts": {
     "start": "umi dev",
     "template": "plop",
     "build": "cross-env umi build && rimraf ./dist/*.js.map ./dist/*.css.map",
     "test": "umi test",
-    "mock": "cross-env MOCK=true umi dev",
-    "unmock": "cross-env MOCK=none umi dev",
-    "lint:es": "eslint --ext .js src mock tests",
-    "lint:ts": "eslint --ext .ts,.tsx src",
-    "lint:fix": "eslint --fix --cache --ext .js,.jsx,.ts,.tsx --format=pretty ./src",
+    "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx ./src",
     "lint-staged": "lint-staged",
-    "lint-staged:js": "eslint --ext .js,.jsx,.ts,.tsx ./src",
-    "prettier": "prettier-eslint --write 'src/**/*'"
+    "lint-staged:all": "eslint --ext .js,.jsx,.ts,.tsx ./src",
+    "prettier": "prettier-eslint --write 'src/**/*'",
+    "release": "rimraf package-lock.json && standard-version -a && git push --follow-tags",
+    "commit": "git add -A && git-cz"
   },
   "dependencies": {
     "@ant-design/icons": "^4.1.0",
@@ -50,6 +52,8 @@
     "uuid": "^3.3.3"
   },
   "devDependencies": {
+    "@commitlint/cli": "^9.1.1",
+    "@commitlint/config-conventional": "^9.1.1",
     "@sentry/webpack-plugin": "^1.11.1",
     "@types/classnames": "^2.2.9",
     "@types/crypto-js": "^3.1.44",
@@ -71,7 +75,10 @@
     "@typescript-eslint/parser": "^2.10.0",
     "@typescript-eslint/typescript-estree": "^2.10.0",
     "babel-eslint": "^9.0.0",
+    "concurrently": "^5.2.0",
+    "conventional-changelog-cli": "^2.0.34",
     "cross-env": "^6.0.3",
+    "cz-conventional-changelog": "^3.2.0",
     "eslint": "^5.4.0",
     "eslint-config-umi": "^1.4.0",
     "eslint-import-resolver-typescript": "^2.0.0",
@@ -84,11 +91,14 @@
     "jest-puppeteer": "^4.3.0",
     "lint-staged": "^7.2.2",
     "node-sass": "^4.12.0",
+    "nodemon": "^2.0.4",
     "prettier-eslint": "^9.0.1",
     "prettier-eslint-cli": "^5.0.0",
     "react-test-renderer": "^16.7.0",
     "react-use": "^12.2.2",
+    "rimraf": "^3.0.2",
     "sass-loader": "^7.2.0",
+    "standard-version": "^8.0.2",
     "tslint": "^5.12.0",
     "tslint-eslint-rules": "^5.4.0",
     "tslint-react": "^3.6.0",
@@ -98,12 +108,14 @@
     "umi-types": "^0.2.0"
   },
   "optionalDependencies": {
+    "commitizen": "^4.1.2",
     "plop": "^2.6.0",
     "puppeteer": "^1.20.0"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint-staged"
+      "pre-commit": "npm run lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
   "lint-staged": {
@@ -111,9 +123,14 @@
       "prettier-eslint --write",
       "git add"
     ],
-    "**/*.{js,jsx,ts,tsx}": "npm run lint-staged:js"
+    "**/*.{js,jsx,ts,tsx}": "npm run lint-staged:all"
   },
   "engines": {
     "node": ">=8.0.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
