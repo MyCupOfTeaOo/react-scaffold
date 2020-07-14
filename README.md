@@ -1,8 +1,5 @@
 # 1. react 手脚架
 
-- [ ] 结构组织修改已适应区块化
-- [ ] 添加新增区块的脚本
-
 ![页面截图](./public/welcome.png)
 
 <!-- TOC -->
@@ -10,6 +7,7 @@
 - [1. react 手脚架](#1-react-手脚架)
 - [2. 概述](#2-概述)
 - [3. 安装与运行](#3-安装与运行)
+- [提交代码](#提交代码)
 - [4. 构建与发布](#4-构建与发布)
   - [4.1. 构建环境变量](#41-构建环境变量)
   - [4.2. 其他环境变量](#42-其他环境变量)
@@ -18,7 +16,7 @@
 - [6. 开发环境配置](#6-开发环境配置)
 - [7. 组件用例](#7-组件用例)
 - [8. 菜单动态加载组件](#8-菜单动态加载组件)
-- [9. 备注](#9-备注)
+- [9. FAQ](#9-faq)
 
 <!-- /TOC -->
 
@@ -32,9 +30,15 @@
 > 安装 `npm i`
 > 运行 `npm run start`
 
+# 提交代码
+
+> 遵循 https://www.conventionalcommits.org/
+> 也可以使用 npm run commit 来快速格式化提交
+
 # 4. 构建与发布
 
-> 执行 `npm run build`
+> 执行 `npm run release`生成 tag
+> 执行 `npm run build`构建
 > 如有 `sentry` 启用需求,需要在项目下添加 `.sentryclirc` 文件,具体文件格式请参照 `sentry` 官网文档
 
 ## 4.1. 构建环境变量
@@ -116,6 +120,6 @@ url 设计: `component:{block组件}({注入的组件props})path={url路径}`
 
 例:`component:AutoGenPage({"type": "cnt"})path=cnt`
 
-# 9. 备注
+# 9. FAQ
 
 > 默认是开启 mock 的,需要关闭,请创建`.env.local`文件,并添加 `mock=none`
