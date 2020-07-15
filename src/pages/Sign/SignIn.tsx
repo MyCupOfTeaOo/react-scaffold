@@ -1,5 +1,4 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react';
-import router from 'umi/router';
 import { Alert } from 'antd';
 import Redirect from 'umi/redirect';
 import { useForm, useStore, Label, login } from 'teaness';
@@ -7,9 +6,11 @@ import { TextField, Fab, CircularProgress } from '@material-ui/core';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { inject } from 'mobx-react';
 import { Link } from 'umi';
+
 import { getGuestUid, fakeAccountLogin } from '@/service/login';
 import { RouteProps } from '@/typings';
 import User from '@/stores/User';
+import { getWelcomeWindow } from '@/utils/window';
 import { setToken, getToken } from '../../utils/authority';
 import styles from './SignIn.scss';
 
@@ -32,6 +33,7 @@ function SignIn(props: SignInProps) {
   const [errText, setErrText] = useState<string | undefined>(undefined);
   const store = useStore<SignForm>({
     username: {
+      defaultValue: '',
       rules: [
         {
           required: true,
@@ -43,6 +45,7 @@ function SignIn(props: SignInProps) {
       },
     },
     password: {
+      defaultValue: '',
       rules: [
         {
           required: true,
@@ -98,6 +101,7 @@ function SignIn(props: SignInProps) {
   const submit = useCallback(
     e => {
       e.preventDefault();
+
       store.submit(({ values, errs }) => {
         if (errs) return;
         setlogining(true);
@@ -110,8 +114,7 @@ function SignIn(props: SignInProps) {
           if (resp.isSuccess) {
             setToken(resp.data.jwt);
             props.user.loadUser();
-            setlogining(false);
-            router.replace('/');
+            getWelcomeWindow();
           } else {
             setErrText(resp.msg);
             onGetCaptcha();

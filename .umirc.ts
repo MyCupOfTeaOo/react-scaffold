@@ -52,6 +52,13 @@ const config: IConfig = {
       ]);
     }
   },
+  externals(context, request, callback) {
+    const load = ['electron', 'fs', 'path', 'os', 'electron-log'];
+    if (load.includes(request)) {
+      return callback(null, `require('${request}')`);
+    }
+    (callback as any)();
+  },
   plugins: [
     // ref: https://umijs.org/plugin/umi-plugin-react.html
     [

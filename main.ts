@@ -1,8 +1,8 @@
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
+// import getWindow from '@/utils/window'
 
 const createWindow = () => {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
     height: 656,
     width: 400,
@@ -16,14 +16,16 @@ const createWindow = () => {
     show: false,
     alwaysOnTop: true,
     transparent: true,
-    hasShadow: true,
   });
+
   if (process.env.NODE_ENV === 'development') {
     mainWindow.loadURL('http://localhost:8000');
   } else {
     mainWindow.loadFile(path.join(__dirname, './dist/index.html'));
   }
+
   mainWindow.once('ready-to-show', () => {
+    mainWindow.webContents.session.clearStorageData();
     mainWindow.show();
   });
 };

@@ -9,10 +9,9 @@ import axios, {
   AxiosResponse,
 } from 'axios';
 import * as Sentry from '@sentry/browser';
-import stores from '@/stores';
-import { stringify } from 'qs';
 import { apiPrefix } from '#/projectConfig';
 import { getToken, clearToken } from './authority';
+import { getLoginWindow } from './window';
 
 export enum respCode {
   success = 200,
@@ -60,11 +59,8 @@ const errorHandler = async (error: {
   const { response, message } = error;
   if (response && response.status) {
     if (response.status === 403) {
-      stores.user.clearUser();
       clearToken();
-      window.location.href = `/sign/signIn?${stringify({
-        sysId: stores.global.sysId,
-      })}`;
+      getLoginWindow();
     }
     const errortext =
       response.data?.msg ||

@@ -34,3 +34,5 @@ main.js
 
 # local
 .env.local
+
+config/**/*.js

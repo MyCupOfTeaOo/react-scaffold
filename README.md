@@ -1,5 +1,7 @@
 # 1. react + electron 手脚架
 
+- [ ] 自己实现标题栏
+
 ![页面截图](./public/welcome.png)
 
 <!-- TOC -->

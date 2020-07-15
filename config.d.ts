@@ -26,7 +26,6 @@ declare global {
     extends EventTarget,
       WindowSessionStorage,
       WindowLocalStorage,
-      WindowConsole,
       GlobalEventHandlers,
       AnimationFrameProvider,
       WindowOrWorkerGlobalScope,

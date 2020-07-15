@@ -1,12 +1,12 @@
 import React from 'react';
 import { Layout } from 'antd';
 import { LogoutOutlined } from '@ant-design/icons';
-import router from 'umi/router';
 import { inject, observer } from 'mobx-react';
 import { Link } from 'umi';
 import { clearToken } from '@/utils/authority';
 import User from '@/stores/User';
 import Global from '@/stores/Global';
+import { getLoginWindow } from '@/utils/window';
 import { projectName } from '#/projectConfig';
 import styles from './header.scss';
 
@@ -18,7 +18,7 @@ interface HeaderProps {
   global: Global;
 }
 
-const Header: React.FC<HeaderProps> = ({ clearUser, logo }) => {
+const Header: React.FC<HeaderProps> = ({ logo }) => {
   return (
     <Layout.Header className={styles.header}>
       <Link to="/">
@@ -33,8 +33,7 @@ const Header: React.FC<HeaderProps> = ({ clearUser, logo }) => {
           className={styles.icon}
           onClick={() => {
             clearToken();
-            clearUser();
-            router.push('/sign/signIn');
+            getLoginWindow();
           }}
         >
           <LogoutOutlined />
