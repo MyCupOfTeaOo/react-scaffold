@@ -1,7 +1,7 @@
 export const baseUrl: string =
   process.env.NODE_ENV === 'development' ? '/' : '/'; // url根路径
 export const publicPath: string = '/'; // 打包文件根路径
-export const projectName: string = 'react手脚架'; // 项目名
+export const projectName: string = 'Electron 脚手架'; // 项目名
 export const prefix: string | undefined = 'tic'; // 项目前缀 与 页面缓存相关
 export const sysId: string = 'tic'; // 子系统id 与 菜单加载相关
 export const apiPrefix: string =

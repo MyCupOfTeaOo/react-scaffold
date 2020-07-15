@@ -15,16 +15,34 @@ $item-h: 40px;
 }
 
 .layout {
-  width: 480px;
+  width: 100%;
   margin: 0 auto;
-  box-shadow: $component-shadow;
-  padding-top: 40px;
-  backdrop-filter: blur(2px);
+  padding: 0 $padding;
+  .input {
+    width: 100%;
+
+    label {
+      color: #fff;
+    }
+    input {
+      color: #fff;
+    }
+    :global {
+      .MuiInput-underline {
+        &:hover {
+          border-color: #fff;
+          &::before {
+            border-color: #fff;
+          }
+        }
+        &::before {
+          border-color: #fff;
+        }
+      }
+    }
+  }
 }
-.form {
-  width: 368px;
-  margin: auto;
-}
+
 .captcha {
   height: $item-h;
   img {
@@ -33,12 +51,46 @@ $item-h: 40px;
   }
 }
 
+.submit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  h2 {
+    color: #9c8876;
+    font-size: 28px;
+  }
+}
+
 .toolbar {
   width: 100%;
   display: flex;
   justify-content: space-between;
-  padding: $tiny-padding 0 $small-padding 0;
-  :global(.ant-divider) {
-    background: rgba($color: $text-color, $alpha: 0.4);
+  padding: $small-padding 0;
+  a {
+    color: $gray-5;
+    text-decoration: underline;
+  }
+}
+
+.submitWrapper {
+  position: relative;
+  .fabProgress {
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    z-index: 1;
+  }
+}
+
+.alert {
+  background-color: rgba($color: #000000, $alpha: 0);
+  border: none;
+  :global {
+    .ant-alert-message {
+      color: $volcano-5;
+    }
+    .anticon-close {
+      color: #e5e5e5;
+    }
   }
 }

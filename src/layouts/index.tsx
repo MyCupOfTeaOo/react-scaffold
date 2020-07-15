@@ -16,6 +16,7 @@ import { RouteProps } from '@/typings';
 import request, { ReqResponse } from '@/utils/request';
 import { getFileInfo, uploadFile } from '@/service/file';
 import { setToken, getToken } from '@/utils/authority';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core';
 import styles from './index.scss';
 import { apiPrefix } from '#/projectConfig';
 
@@ -119,6 +120,17 @@ Upload.defaultProps = {
   },
 };
 
+const muiTheme = createMuiTheme({
+  palette: {
+    primary: {
+      light: '#1ab394',
+      main: '#1ab394',
+      dark: '#1ab394',
+      contrastText: '#fff',
+    },
+  },
+});
+
 const Layout: React.FC<RouteProps<
   {},
   undefined,
@@ -171,9 +183,11 @@ const Layout: React.FC<RouteProps<
   return (
     <Boundary>
       <ConfigProvider locale={zhCN}>
-        <Provider {...stores}>
-          <div className={styles.normal}>{props.children}</div>
-        </Provider>
+        <ThemeProvider theme={muiTheme}>
+          <Provider {...stores}>
+            <div className={styles.normal}>{props.children}</div>
+          </Provider>
+        </ThemeProvider>
       </ConfigProvider>
     </Boundary>
   );

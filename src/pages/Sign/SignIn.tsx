@@ -1,16 +1,15 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react';
 import router from 'umi/router';
-import { Input, Row, Col, Button, Alert, Spin } from 'antd';
-import Icon, { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { Alert } from 'antd';
 import Redirect from 'umi/redirect';
 import { useForm, useStore, Label, login } from 'teaness';
+import { TextField, Fab, CircularProgress } from '@material-ui/core';
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { inject } from 'mobx-react';
 import { Link } from 'umi';
 import { getGuestUid, fakeAccountLogin } from '@/service/login';
 import { RouteProps } from '@/typings';
 import User from '@/stores/User';
-import { ReactComponent as KeyBoard } from '@/assets/keyboard.svg';
-import { apiPrefix } from '#/projectConfig';
 import { setToken, getToken } from '../../utils/authority';
 import styles from './SignIn.scss';
 
@@ -55,6 +54,7 @@ function SignIn(props: SignInProps) {
       },
     },
     captcha: {
+      defaultValue: '1234',
       rules: [
         {
           required: true,
@@ -115,7 +115,10 @@ function SignIn(props: SignInProps) {
           } else {
             setErrText(resp.msg);
             onGetCaptcha();
-            setlogining(false);
+            // 加点延迟效果好一点
+            setTimeout(() => {
+              setlogining(false);
+            }, 400);
           }
         });
       });
@@ -128,7 +131,7 @@ function SignIn(props: SignInProps) {
         {getToken() ? <Redirect to="/" /> : null}
         {errText && !logining && (
           <Alert
-            style={{ margin: '0 auto', maxWidth: 368 }}
+            className={styles.alert}
             message={errText}
             type="error"
             showIcon
@@ -138,33 +141,23 @@ function SignIn(props: SignInProps) {
         <div className={styles.form}>
           <Form layout={login}>
             <Item id="username">
-              <Input
-                placeholder="账户"
-                size="large"
-                prefix={<UserOutlined />}
-              />
+              <TextField className={styles.input} label="账户" />
             </Item>
             <Item id="password">
-              <Input
-                placeholder="密码"
+              <TextField
                 type="password"
-                size="large"
-                prefix={<LockOutlined />}
+                className={styles.input}
+                label="密码"
               />
             </Item>
-            <Item id="captcha">
+            {/* <Item id="captcha">
               {params => (
                 <Row gutter={8}>
                   <Col span={16}>
-                    <Input
+                    <TextField
+                      className={styles.input}
                       {...params}
-                      size="large"
-                      prefix={
-                        <Icon
-                          component={KeyBoard}
-                          className={styles.keyBoard}
-                        />
-                      }
+                      label="验证码"
                     />
                   </Col>
                   <Col span={8} className={styles.captcha}>
@@ -187,36 +180,28 @@ function SignIn(props: SignInProps) {
                   </Col>
                 </Row>
               )}
-            </Item>
+            </Item> */}
             <Label>
-              <Button
-                loading={logining}
-                size="large"
-                type="primary"
-                htmlType="submit"
-                onClick={submit}
-                block
-              >
-                登录
-              </Button>
-            </Label>
-            <div className={styles.toolbar}>
-              <div />
-              <div>
-                <a
-                  style={{
-                    marginRight: 12,
-                  }}
-                  onClick={() => {
-                    router.push('/forget');
-                  }}
-                >
-                  找回密码
-                </a>
-                <Link to="/signUp">注册账户</Link>
+              <div className={styles.submit}>
+                <div />
+                <div className={styles.submitWrapper}>
+                  <Fab onClick={submit} type="submit" disabled={loading}>
+                    <ArrowForwardIcon />
+                  </Fab>
+                  {loading && (
+                    <CircularProgress
+                      size={68}
+                      className={styles.fabProgress}
+                    />
+                  )}
+                </div>
               </div>
-            </div>
+            </Label>
           </Form>
+          <div className={styles.toolbar}>
+            <Link to="/signUp">注册</Link>
+            <Link to="/forget">找回密码?</Link>
+          </div>
         </div>
       </div>
     </div>

@@ -90,6 +90,7 @@ body,
     Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
     'Segoe UI Symbol', sans-serif;
   height: 100%;
+  background-color: rgba($color: #fff, $alpha: 0);
   .ant-layout-sider-children {
     background: #fff;
     overflow-y: auto;
@@ -602,5 +603,15 @@ html {
   padding: 12px;
   & > svg {
     margin-right: 12px;
+  }
+}
+
+// from-error
+
+.form-error {
+  .MuiInput-underline {
+    &::before {
+      border-color: $danger !important;
+    }
   }
 }

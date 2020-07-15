@@ -4,11 +4,12 @@ import * as path from 'path';
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    height: 600,
+    height: 656,
     width: 400,
     webPreferences: {
       nodeIntegration: true,
     },
+    backgroundColor: '#00ffffff',
     titleBarStyle: 'hidden',
     resizable: false,
     frame: false,

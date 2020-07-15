@@ -3,7 +3,7 @@ import mock from './mock';
 
 const proxy = {
   [`/${apiPrefix}`]: {
-    target: 'http://192.168.117.102:84',
+    target: 'http://dev.jsbi.web',
     changeOrigin: true,
   },
 
