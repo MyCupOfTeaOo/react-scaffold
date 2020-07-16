@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Spin, Layout, Modal } from 'antd';
 import { MenuFoldOutlined } from '@ant-design/icons';
 import Redirect from 'umi/redirect';
@@ -18,15 +18,22 @@ import { projectName } from '#/projectConfig';
 import styles from './index.scss';
 
 const { Sider, Content } = Layout;
-const rootIndex = window?.g_routes?.findIndex(item => item.path === '/');
-const index = window?.g_routes[rootIndex]?.routes?.findIndex(
-  item => item.path === '/',
-) as number;
 
 const BasicLayout: React.FC<RouteProps & {
   global: Global;
   user: User;
 }> = props => {
+  const rootIndex = useMemo(
+    () => window?.g_routes?.findIndex(item => item.path === '/'),
+    [],
+  );
+  const index = useMemo(
+    () =>
+      window?.g_routes[rootIndex]?.routes?.findIndex(
+        item => item.path === '/',
+      ) as number,
+    [],
+  );
   const [loading, setloading] = useState(true);
   useEffect(() => {
     if (!getToken()) return;

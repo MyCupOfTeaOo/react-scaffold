@@ -25,15 +25,7 @@ const config: IConfig = {
     'process.env.AES': process.env.AES,
     'process.env.DSN': process.env.DSN,
   },
-  autoprefixer: {
-    browsers: [
-      '>1%',
-      'last 5 versions',
-      'Firefox ESR',
-      'not ie < 9', // React doesn't support IE8 anyway
-    ],
-    flexbox: true,
-  },
+  // electron 没必要开兼容
   alias: {
     '#': path.resolve(__dirname, 'config/'),
   },
@@ -66,13 +58,13 @@ const config: IConfig = {
       {
         antd: true,
         dva: false,
-        dynamicImport: {
-          webpackChunkName: true,
-          loadingComponent: './components/Loading',
-        },
+        // electron 没必要开动态导入
+        // dynamicImport: {
+        //   webpackChunkName: true,
+        //   loadingComponent: './components/Loading',
+        // },
         title: projectName,
         dll: false,
-
         routes: {
           exclude: [
             /stores\//,

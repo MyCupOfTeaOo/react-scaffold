@@ -179,7 +179,6 @@ const Layout: React.FC<RouteProps<
       </Spin>
     );
   }
-
   return (
     <Boundary>
       <ConfigProvider locale={zhCN}>

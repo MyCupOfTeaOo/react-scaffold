@@ -45,12 +45,7 @@ function subPagesGen(routes?: RouteConfig[]): string {
       const temp2 = `{
       component: ${
         item.component
-          ? `__IS_BROWSER
-        ? dynamic({
-          loader: () => import('${item.component}'),
-          loading: Loading
-        })
-        : require('${item.component}').default`
+          ? `require('${item.component}').default`
           : undefined
       },
         path: '${item.path}',
