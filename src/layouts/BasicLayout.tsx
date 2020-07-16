@@ -44,6 +44,7 @@ const BasicLayout: React.FC<RouteProps & {
     setTimeout(() => {
       const currentWin = remote.getCurrentWindow();
       stores.global.maximize();
+      currentWin.setAlwaysOnTop(false);
       setTimeout(() => {
         currentWin.setOpacity(1);
       }, 100);

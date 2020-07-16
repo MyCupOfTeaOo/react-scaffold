@@ -18,7 +18,7 @@ export function getLoginWindow() {
   currentWin.setAlwaysOnTop(true);
   currentWin.setFullScreenable(false);
   currentWin.setMaximizable(false);
-  currentWin.setContentSize(400, 656);
+  currentWin.setSize(400, 656);
   currentWin.center();
   return currentWin;
 }

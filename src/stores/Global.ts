@@ -46,7 +46,6 @@ export default class Global {
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
-    win.setAlwaysOnTop(false);
     win.on('maximize', () => {
       this.isMaximized = true;
     });
