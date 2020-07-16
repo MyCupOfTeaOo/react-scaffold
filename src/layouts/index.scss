@@ -19,10 +19,14 @@
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
+  background-color: #3d4e54;
   background-image: url('../assets/back.png');
   background-position: -308px 0px;
   background-size: cover;
   background-repeat: no-repeat;
+  > * {
+    user-select: none;
+  }
   .logo {
     height: 50px;
     margin-right: $small-padding;
