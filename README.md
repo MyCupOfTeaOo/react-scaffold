@@ -1,6 +1,8 @@
 # 1. react + electron 手脚架
 
-- [ ] 自己实现标题栏
+- [x] 自己实现标题栏
+- [ ] 标题菜单
+- [ ] 使用自己的 resize 替换 electron 的 resize
 
 ![页面截图](./public/welcome.png)
 
