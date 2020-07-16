@@ -1,57 +1,25 @@
-import { remote, BrowserWindow } from 'electron';
-
-export interface ReloadOptions {
-  maximize?: boolean;
-}
-
-export function getMyWindow(
-  options: ReloadOptions = {},
-  ...config: ConstructorParameters<typeof BrowserWindow>
-) {
-  const { maximize } = options;
-  const win = new remote.BrowserWindow(...config);
-  const currentWin = remote.getCurrentWindow();
-  win.loadURL(remote.getCurrentWindow().webContents.getURL());
-  win.on('ready-to-show', () => {
-    currentWin.close();
-    maximize && win.maximize();
-    win.show();
-  });
-  return win;
-}
+import { remote } from 'electron';
+import { router } from 'umi';
 
 export function getWelcomeWindow() {
-  return getMyWindow(
-    { maximize: true },
-    {
-      webPreferences: {
-        nodeIntegration: true,
-      },
-      backgroundColor: '#ffffff',
-      titleBarStyle: 'hidden',
-      resizable: true,
-      maximizable: true,
-      show: false,
-    },
-  );
+  const currentWin = remote.getCurrentWindow();
+  currentWin.hide();
+  router.replace('/');
+  currentWin.setResizable(true);
+  currentWin.setMaximizable(true);
+  currentWin.setFullScreenable(true);
+  currentWin.setAlwaysOnTop(false);
+  return currentWin;
 }
 
 export function getLoginWindow() {
-  return getMyWindow(
-    {},
-    {
-      height: 656,
-      width: 400,
-      webPreferences: {
-        nodeIntegration: true,
-      },
-      backgroundColor: '#00ffffff',
-      titleBarStyle: 'hidden',
-      resizable: false,
-      frame: false,
-      show: false,
-      alwaysOnTop: true,
-      transparent: true,
-    },
-  );
+  const currentWin = remote.getCurrentWindow();
+  currentWin.hide();
+  currentWin.setResizable(false);
+  currentWin.setMaximizable(false);
+  currentWin.setAlwaysOnTop(true);
+  currentWin.setContentSize(400, 656);
+  currentWin.center();
+  router.replace('/');
+  return currentWin;
 }

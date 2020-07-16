@@ -1,6 +1,5 @@
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
-// import getWindow from '@/utils/window'
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
@@ -8,10 +7,14 @@ const createWindow = () => {
     width: 400,
     webPreferences: {
       nodeIntegration: true,
+      // 关闭在后台不渲染的优化
+      backgroundThrottling: false,
     },
     backgroundColor: '#00ffffff',
     titleBarStyle: 'hidden',
     resizable: false,
+    fullscreenable: false,
+    maximizable: false,
     frame: false,
     show: false,
     alwaysOnTop: true,
@@ -25,11 +28,10 @@ const createWindow = () => {
   }
 
   mainWindow.once('ready-to-show', () => {
-    mainWindow.webContents.session.clearStorageData();
     mainWindow.show();
   });
 };
-
+app.commandLine.appendSwitch('wm-window-animations-disabled');
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.

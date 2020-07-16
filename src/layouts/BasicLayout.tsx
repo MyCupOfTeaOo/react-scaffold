@@ -3,6 +3,7 @@ import { Spin, Layout, Modal } from 'antd';
 import { MenuFoldOutlined } from '@ant-design/icons';
 import Redirect from 'umi/redirect';
 import { inject, observer } from 'mobx-react';
+import { remote } from 'electron';
 import { getMenuData } from '@/service/permission';
 import pages from '@/pages/.pages';
 import { getToken } from '@/utils/authority';
@@ -37,6 +38,12 @@ const BasicLayout: React.FC<RouteProps & {
   const [loading, setloading] = useState(true);
   useEffect(() => {
     if (!getToken()) return;
+    // 进入下次循环等页面渲染好了
+    setTimeout(() => {
+      const currentWin = remote.getCurrentWindow();
+      currentWin.show();
+      currentWin.maximize();
+    });
     getMenuData()
       .then(resp => {
         if (resp.isSuccess) {
