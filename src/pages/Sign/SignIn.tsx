@@ -11,6 +11,7 @@ import { getGuestUid, fakeAccountLogin } from '@/service/login';
 import { RouteProps } from '@/typings';
 import User from '@/stores/User';
 import { getWelcomeWindow } from '@/utils/window';
+import cache from '@/utils/cache';
 import { setToken, getToken } from '../../utils/authority';
 import styles from './SignIn.scss';
 
@@ -31,9 +32,10 @@ function SignIn(props: SignInProps) {
   const [uid, setuid] = useState<string>('');
   const [loading, setloading] = useState(false);
   const [errText, setErrText] = useState<string | undefined>(undefined);
+  const defaultUserName = cache.getLocalCache('username') || '';
   const store = useStore<SignForm>({
     username: {
-      defaultValue: '',
+      defaultValue: defaultUserName,
       rules: [
         {
           required: true,
@@ -112,6 +114,7 @@ function SignIn(props: SignInProps) {
           sysId: props.sysId,
         }).then(resp => {
           if (resp.isSuccess) {
+            cache.setLocalCache('username', values.username as string);
             setToken(resp.data.jwt);
             props.user.loadUser();
             getWelcomeWindow();
@@ -144,10 +147,15 @@ function SignIn(props: SignInProps) {
         <div className={styles.form}>
           <Form layout={login}>
             <Item id="username">
-              <TextField className={styles.input} label="账户" />
+              <TextField
+                autoFocus={!defaultUserName}
+                className={styles.input}
+                label="账户"
+              />
             </Item>
             <Item id="password">
               <TextField
+                autoFocus={!!defaultUserName}
                 type="password"
                 className={styles.input}
                 label="密码"
