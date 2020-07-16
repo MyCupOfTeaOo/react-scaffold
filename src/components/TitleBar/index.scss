@@ -1,0 +1,25 @@
+@import '@/global.scss';
+
+$container-height: 30px;
+
+.container {
+  background-color: rgb(32, 33, 32);
+  display: flex;
+  justify-items: center;
+  height: $container-height;
+  color: #ccc;
+  &.blur {
+    color: rgba(204, 204, 204, 0.6);
+  }
+}
+.title {
+  line-height: $container-height;
+  flex: 0 1 auto;
+  font-size: 12px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin-left: auto;
+  margin-right: auto;
+  zoom: 1;
+}

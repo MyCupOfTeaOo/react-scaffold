@@ -15,6 +15,7 @@ import logo from '@/assets/logo.png';
 import { RouteProps } from '@/typings';
 import Global from '@/stores/Global';
 import User from '@/stores/User';
+import TitleBar from '@/components/TitleBar';
 import { projectName } from '#/projectConfig';
 import styles from './index.scss';
 
@@ -116,6 +117,7 @@ const BasicLayout: React.FC<RouteProps & {
   }
   return (
     <Layout className={styles.normal}>
+      <TitleBar />
       <Header
         logo={logo}
         title={projectName}

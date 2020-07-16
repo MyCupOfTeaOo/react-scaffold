@@ -2,7 +2,7 @@ import dynamic from 'umi/dynamic';
 import numeral from 'numeral';
 import moment from 'moment';
 import lodash from 'lodash';
-import Title from '@/components/Title';
+import PageTitle from '@/components/PageTitle';
 import { GRoute, MenuId2Url, MenuResponse } from '@/typings';
 import NotImplementPage from '@/pages/501';
 import NotFoundPage from '@/pages/404';
@@ -127,7 +127,7 @@ export function GenSubRoutes(
       };
     }
     return {
-      Routes: item.title ? [Title, AuthRoutes] : [AuthRoutes],
+      Routes: item.title ? [PageTitle, AuthRoutes] : [AuthRoutes],
       component: component || NotImplementPage,
       path,
       exact: item.exact ?? !isComponent,
@@ -189,7 +189,7 @@ export function GenRoutes(
             Routes:
               // 全部都是子路由才展示title
               routes.length === subRoutes.length + 2
-                ? [Title, AuthRoutes]
+                ? [PageTitle, AuthRoutes]
                 : undefined,
             component,
             path,
@@ -201,7 +201,7 @@ export function GenRoutes(
         } else {
           return {
             isMenu: item.isMenu ?? target?.isMenu ?? true,
-            Routes: [Title, AuthRoutes],
+            Routes: [PageTitle, AuthRoutes],
             component,
             path,
             menuId: item.menuId,
@@ -242,7 +242,7 @@ export function GenRoutes(
         } else {
           return {
             isMenu: item.isMenu ?? true,
-            Routes: [Title, AuthRoutes],
+            Routes: [PageTitle, AuthRoutes],
             component: NotImplementPage,
             path,
             menuId: item.menuId,

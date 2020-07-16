@@ -32,7 +32,7 @@ function SignIn(props: SignInProps) {
   const [uid, setuid] = useState<string>('');
   const [loading, setloading] = useState(false);
   const [errText, setErrText] = useState<string | undefined>(undefined);
-  const defaultUserName = cache.getLocalCache('username') || '';
+  const defaultUserName = cache.getLocalCache<string>('username') || '';
   const store = useStore<SignForm>({
     username: {
       defaultValue: defaultUserName,

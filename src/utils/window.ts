@@ -20,6 +20,5 @@ export function getLoginWindow() {
   currentWin.setAlwaysOnTop(true);
   currentWin.setContentSize(400, 656);
   currentWin.center();
-  router.replace('/');
   return currentWin;
 }

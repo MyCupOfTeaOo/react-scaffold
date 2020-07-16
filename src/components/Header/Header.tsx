@@ -7,6 +7,7 @@ import { clearToken } from '@/utils/authority';
 import User from '@/stores/User';
 import Global from '@/stores/Global';
 import { getLoginWindow } from '@/utils/window';
+import stores from '@/stores';
 import { projectName } from '#/projectConfig';
 import styles from './header.scss';
 
@@ -33,6 +34,7 @@ const Header: React.FC<HeaderProps> = ({ logo }) => {
           className={styles.icon}
           onClick={() => {
             clearToken();
+            stores.user.clearUser();
             getLoginWindow();
           }}
         >
