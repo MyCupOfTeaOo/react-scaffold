@@ -8,6 +8,7 @@ interface TitleBar {}
 const TitleBar: React.FC<TitleBar> = () => {
   return (
     <div className={styles.container}>
+      <div className={styles.drag} />
       <Title />
       <Control />
     </div>

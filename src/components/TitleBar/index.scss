@@ -3,12 +3,14 @@
 $container-height: 30px;
 
 .container {
-  -webkit-app-region: drag;
+  position: relative;
+  // -webkit-app-region: drag;
   background-color: rgb(32, 33, 32);
   display: flex;
   justify-items: center;
   height: $container-height;
   color: #ccc;
+  user-select: none;
   &.blur {
     color: rgba(204, 204, 204, 0.6);
   }
@@ -26,6 +28,7 @@ $container-height: 30px;
 }
 
 .controlLayout {
+  z-index: 1;
   -webkit-app-region: no-drag;
   display: flex;
   align-items: center;
@@ -51,4 +54,13 @@ $container-height: 30px;
       background-color: rgba(232, 17, 35, 0.9);
     }
   }
+}
+
+.drag {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  bottom: 0;
+  left: 4px;
+  -webkit-app-region: drag;
 }
