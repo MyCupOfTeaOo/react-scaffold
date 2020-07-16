@@ -9,18 +9,17 @@ const createWindow = () => {
       nodeIntegration: true,
       // 关闭在后台不渲染的优化
       backgroundThrottling: false,
+      nativeWindowOpen: true,
     },
-    backgroundColor: '#00ffffff',
+    backgroundColor: '#f5f5f5',
     titleBarStyle: 'hidden',
-    resizable: false,
     fullscreenable: false,
     maximizable: false,
     frame: false,
     show: false,
     alwaysOnTop: true,
-    transparent: true,
+    opacity: 1,
   });
-
   if (process.env.NODE_ENV === 'development') {
     mainWindow.loadURL('http://localhost:8000');
   } else {
@@ -31,7 +30,7 @@ const createWindow = () => {
     mainWindow.show();
   });
 };
-app.commandLine.appendSwitch('wm-window-animations-disabled');
+// app.commandLine.appendSwitch('wm-window-animations-enable');
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.

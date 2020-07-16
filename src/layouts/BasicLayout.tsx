@@ -16,6 +16,7 @@ import { RouteProps } from '@/typings';
 import Global from '@/stores/Global';
 import User from '@/stores/User';
 import TitleBar from '@/components/TitleBar';
+import stores from '@/stores';
 import { projectName } from '#/projectConfig';
 import styles from './index.scss';
 
@@ -42,8 +43,10 @@ const BasicLayout: React.FC<RouteProps & {
     // 进入下次循环等页面渲染好了
     setTimeout(() => {
       const currentWin = remote.getCurrentWindow();
-      currentWin.show();
-      currentWin.maximize();
+      stores.global.maximize();
+      setTimeout(() => {
+        currentWin.setOpacity(1);
+      }, 100);
     });
     getMenuData()
       .then(resp => {

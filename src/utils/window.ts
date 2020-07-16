@@ -3,9 +3,8 @@ import { router } from 'umi';
 
 export function getWelcomeWindow() {
   const currentWin = remote.getCurrentWindow();
-  currentWin.hide();
+  currentWin.setOpacity(0);
   router.replace('/');
-  currentWin.setResizable(true);
   currentWin.setMaximizable(true);
   currentWin.setFullScreenable(true);
   currentWin.setAlwaysOnTop(false);
@@ -14,10 +13,11 @@ export function getWelcomeWindow() {
 
 export function getLoginWindow() {
   const currentWin = remote.getCurrentWindow();
-  currentWin.hide();
-  currentWin.setResizable(false);
-  currentWin.setMaximizable(false);
+  currentWin.setOpacity(0);
+  currentWin.unmaximize();
   currentWin.setAlwaysOnTop(true);
+  currentWin.setFullScreenable(false);
+  currentWin.setMaximizable(false);
   currentWin.setContentSize(400, 656);
   currentWin.center();
   return currentWin;

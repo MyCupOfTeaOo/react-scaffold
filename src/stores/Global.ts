@@ -3,8 +3,11 @@ import { debounce } from 'lodash';
 import { getOprs } from '@/service/permission';
 import cache from '@/utils/cache';
 import { ReqResponse } from '@/utils/request';
+import { remote } from 'electron';
 import { sysId } from '#/projectConfig';
 import { RootStore } from '.';
+
+const win = remote.getCurrentWindow();
 
 export interface MenuId2Url {
   [key: string]: string;
@@ -24,6 +27,9 @@ export default class Global {
   isMain = true;
 
   @observable
+  isMaximized = false;
+
+  @observable
   menuId2Url: MenuId2Url = {};
 
   @observable
@@ -40,6 +46,13 @@ export default class Global {
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
+    win.setAlwaysOnTop(false);
+    win.on('maximize', () => {
+      this.isMaximized = true;
+    });
+    win.on('unmaximize', () => {
+      this.isMaximized = false;
+    });
   }
 
   @action
@@ -63,6 +76,18 @@ export default class Global {
   setSysId = (newId: string) => {
     this.sysId = newId;
     this.isMain = newId === sysId;
+  };
+
+  @action
+  maximize = () => {
+    win.maximize();
+    this.isMaximized = true;
+  };
+
+  @action
+  unmaximize = () => {
+    win.unmaximize();
+    this.isMaximized = false;
   };
 
   setMenuIdOprs = flow(function*(this: Global, menuId: string): any {

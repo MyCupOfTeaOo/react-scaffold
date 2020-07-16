@@ -10,8 +10,10 @@ export interface SignLayoutProps extends RouteProps {}
 
 const SignLayout: React.FC<SignLayoutProps> = props => {
   useEffect(() => {
-    // 进入下次循环等页面渲染好了
-    setTimeout(remote.getCurrentWindow().show);
+    // 进入下次循环等页面渲染好了,留点时间等图片加载
+    setTimeout(() => {
+      remote.getCurrentWindow().setOpacity(1);
+    }, 100);
   }, []);
   if (getToken()) return <Redirect to="/" />;
   return (
