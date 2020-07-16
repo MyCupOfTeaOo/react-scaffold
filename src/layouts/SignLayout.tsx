@@ -18,7 +18,6 @@ const SignLayout: React.FC<SignLayoutProps> = props => {
   if (getToken()) return <Redirect to="/" />;
   return (
     <div className={styles.sign}>
-      <header className={styles.header} />
       <div className={styles.title}>
         <h1>{projectName}</h1>
       </div>

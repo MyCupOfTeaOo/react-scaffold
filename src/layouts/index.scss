@@ -1,15 +1,7 @@
 @import 'src/global.scss';
 
-.header {
-  padding: $padding;
-  width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  -webkit-app-region: drag;
-}
-
 .sign {
+  -webkit-app-region: drag;
   position: relative;
   height: 100%;
   overflow: hidden;
