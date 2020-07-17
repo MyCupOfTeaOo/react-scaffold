@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import classnames from 'classnames';
 import styles from './index.scss';
 import { MenuButtonConfig } from './typings';
 import MenuButton from './MenuButton';
@@ -10,13 +11,19 @@ interface MenuProps {
 
 const MenuBar: React.FC<MenuProps> = ({ menus }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const selectedPath = useSelectedPath(ref);
+  const { selectedPath, altPress } = useSelectedPath(ref);
   return (
-    <div ref={ref} className={styles.menubar} role="menubar">
+    <div
+      ref={ref}
+      className={classnames(styles.menubar, {
+        [styles.altPress]: altPress.value,
+      })}
+      role="menubar"
+    >
       {menus.map((menu, i) => (
         <MenuButton
           key={`${menu.label}+${i}`}
-          selectedPath={selectedPath}
+          selectedPath={selectedPath.value}
           path={i}
           {...menu}
         />

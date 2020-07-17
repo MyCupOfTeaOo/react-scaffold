@@ -11,7 +11,11 @@ const MenuButton: React.FC<MenuButtonProps> = props => {
         [styles.focus]: props.selectedPath?.[0] === props.path,
       })}
     >
-      {props.label}({props.accelerator.replace(/Alt\+/i, '')})
+      {props.label}(
+      <span className={styles.menuButtonAccelerator}>
+        {props.accelerator.replace(/Alt\+/i, '')}
+      </span>
+      )
     </div>
   );
 };

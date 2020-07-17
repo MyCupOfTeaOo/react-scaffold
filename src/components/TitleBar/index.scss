@@ -84,5 +84,11 @@ $back-hover: hsla(0, 0%, 100%, 0.1);
     background-color: $back-hover;
   }
 }
+.altPress {
+  .menuButtonAccelerator {
+    text-decoration: underline;
+  }
+}
+
 .menuItem {
 }
