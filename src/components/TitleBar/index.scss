@@ -1,6 +1,7 @@
 @import '@/global.scss';
 
 $container-height: 30px;
+$back-hover: hsla(0, 0%, 100%, 0.1);
 
 .container {
   position: relative;
@@ -17,7 +18,7 @@ $container-height: 30px;
 }
 .title {
   line-height: $container-height;
-  flex: 0 1 auto;
+  flex: 1 1 auto;
   font-size: 12px;
   overflow: hidden;
   white-space: nowrap;
@@ -47,7 +48,7 @@ $container-height: 30px;
   -webkit-font-smoothing: antialiased;
   user-select: none;
   &:hover {
-    background-color: hsla(0, 0%, 100%, 0.1);
+    background-color: $back-hover;
   }
   &.close {
     &:hover {
@@ -63,4 +64,25 @@ $container-height: 30px;
   bottom: 0;
   left: 1px;
   -webkit-app-region: drag;
+}
+
+.menubar {
+  z-index: 1;
+  height: $container-height;
+  line-height: $container-height;
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1 1 auto;
+  overflow: hidden;
+  -webkit-user-select: none;
+}
+
+.menuButton {
+  -webkit-app-region: no-drag;
+  padding: 0 8px;
+  &.focus {
+    background-color: $back-hover;
+  }
+}
+.menuItem {
 }

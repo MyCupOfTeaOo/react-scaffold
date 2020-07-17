@@ -205,10 +205,3 @@ export function useRequest<
     reload,
   };
 }
-
-export interface UseGridOption {
-  /**
-   * 默认 grid
-   */
-  gridId: string;
-}
