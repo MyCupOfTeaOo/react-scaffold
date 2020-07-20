@@ -11,13 +11,14 @@ interface MenuProps {
 
 const MenuBar: React.FC<MenuProps> = ({ menus }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const { selectedPath, altPress } = useSelectedPath(ref);
+  const { selectedPath, altPress } = useSelectedPath(ref, menus);
   return (
     <div
       ref={ref}
       className={classnames(styles.menubar, {
         [styles.altPress]: altPress.value,
       })}
+      tabIndex={-1}
       role="menubar"
     >
       {menus.map((menu, i) => (

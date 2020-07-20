@@ -34,6 +34,7 @@
     "jsx-a11y/label-has-associated-control": 0,
     "jsx-a11y/heading-has-content": 0,
     "jsx-a11y/anchor-has-content": 0,
+    "jsx-a11y/no-noninteractive-tabindex": 0,
     "jsx-a11y/label-has-for": [
       2,
       {

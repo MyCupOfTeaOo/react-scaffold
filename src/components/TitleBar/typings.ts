@@ -1,6 +1,6 @@
 export interface MenuConfig {
   label: string;
-  onClick?(props: MenuItemProps): void;
+  onClick?(): void;
   /**
    * 同一级不能重复
    */
@@ -18,7 +18,8 @@ export interface MenuItemProps extends MenuConfig {
 }
 
 export interface MenuButtonConfig
-  extends Omit<MenuConfig, 'onClick' | 'type' | 'accelerator'> {
+  extends Omit<MenuConfig, 'onClick' | 'accelerator'> {
+  type: 'submenu';
   subMenu: MenuConfig[];
 }
 

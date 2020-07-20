@@ -81,15 +81,44 @@ $btn-padding: 8px;
   -webkit-app-region: no-drag;
   padding: 0 $btn-padding;
   overflow: visible;
+  outline: 0;
   &.focus {
     background-color: $back-hover;
   }
 }
-.altPress {
-  .menurole {
-    text-decoration: underline;
+.keyshort {
+  &::before {
+    content: '(';
+    display: inline-block;
+    text-decoration: none;
+  }
+  &::after {
+    text-decoration: none;
+    display: inline-block;
+    content: ')';
   }
 }
+.altPress {
+  .keyshort {
+    text-decoration: underline;
+  }
+  .menuItem {
+    .keyshort {
+      display: inline-block;
+    }
+  }
+}
+.menuItem {
+  display: flex;
+  .menuItemLabel {
+    flex: 1 1 auto;
+  }
+  .keyshort {
+    display: none;
+  }
+}
+$menuitem-padding: 26px;
+$menulist-padding-top: 6px;
 
 .menulist {
   background-color: $back;
@@ -98,16 +127,26 @@ $btn-padding: 8px;
   background-color: $back;
   -webkit-app-region: no-drag;
   margin-left: -$btn-padding;
-  padding: 6px 1px;
+  padding: $menulist-padding-top 1px;
   box-shadow: rgb(0, 0, 0) 0px 2px 4px;
+}
+.subMenu {
+  margin-top: -$menulist-padding-top;
+  width: auto;
+  // transform: translatex(
+  //   calc(100% - #{$menuitem-padding - $menulist-padding-top})
+  // );
+  margin-left: calc(100% - #{$menuitem-padding + 2px});
+  white-space: nowrap;
 }
 
 .menuItem {
   $height: 24px;
   height: $height;
   line-height: $height;
-  padding: 0 26px;
-  &:hover {
+  padding: 0 $menuitem-padding;
+
+  &.menuItemFocus {
     color: #f8f8f2;
     background-color: rgba(204, 204, 204, 0.6);
   }
