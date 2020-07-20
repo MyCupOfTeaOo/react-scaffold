@@ -1,11 +1,12 @@
-import { roleMap } from './role';
-
 export interface MenuConfig {
   label: string;
   onClick?(props: MenuItemProps): void;
-  role?: keyof typeof roleMap;
+  /**
+   * 同一级不能重复
+   */
+  role: string;
   type: 'normal' | 'separator' | 'submenu' | 'checkbox' | 'radio';
-  accelerator?: string;
+  accelerator?: string[];
   subMenu?: MenuConfig[];
   disabled?: boolean;
 }
@@ -17,11 +18,7 @@ export interface MenuItemProps extends MenuConfig {
 }
 
 export interface MenuButtonConfig
-  extends Omit<MenuConfig, 'onClick' | 'role' | 'type'> {
-  /**
-   * 快捷键必须是 Alt+任意字幕
-   */
-  accelerator: string;
+  extends Omit<MenuConfig, 'onClick' | 'type' | 'accelerator'> {
   subMenu: MenuConfig[];
 }
 

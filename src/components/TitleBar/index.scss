@@ -1,12 +1,12 @@
 @import '@/global.scss';
-
+$back: rgb(32, 33, 32);
 $container-height: 30px;
 $back-hover: hsla(0, 0%, 100%, 0.1);
+$btn-padding: 8px;
 
 .container {
   position: relative;
-  // -webkit-app-region: drag;
-  background-color: rgb(32, 33, 32);
+  background-color: $back;
   display: flex;
   justify-items: center;
   height: $container-height;
@@ -67,7 +67,6 @@ $back-hover: hsla(0, 0%, 100%, 0.1);
 }
 
 .menubar {
-  z-index: 1;
   height: $container-height;
   line-height: $container-height;
   display: flex;
@@ -75,20 +74,44 @@ $back-hover: hsla(0, 0%, 100%, 0.1);
   flex: 1 1 auto;
   overflow: hidden;
   -webkit-user-select: none;
+  z-index: 9999;
 }
 
 .menuButton {
   -webkit-app-region: no-drag;
-  padding: 0 8px;
+  padding: 0 $btn-padding;
+  overflow: visible;
   &.focus {
     background-color: $back-hover;
   }
 }
 .altPress {
-  .menuButtonAccelerator {
+  .menurole {
     text-decoration: underline;
   }
 }
 
+.menulist {
+  background-color: $back;
+  z-index: 2000;
+  position: absolute;
+  background-color: $back;
+  -webkit-app-region: no-drag;
+  margin-left: -$btn-padding;
+  padding: 6px 1px;
+  box-shadow: rgb(0, 0, 0) 0px 2px 4px;
+}
+
 .menuItem {
+  $height: 24px;
+  height: $height;
+  line-height: $height;
+  padding: 0 26px;
+  &:hover {
+    color: #f8f8f2;
+    background-color: rgba(204, 204, 204, 0.6);
+  }
+  .menuItemLabel {
+    margin-right: 52px;
+  }
 }

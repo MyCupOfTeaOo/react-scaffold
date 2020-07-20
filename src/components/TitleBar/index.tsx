@@ -8,42 +8,55 @@ import { MenuButtonConfig } from './typings';
 const menus: MenuButtonConfig[] = [
   {
     label: '文件',
-    accelerator: 'Alt+F',
-    subMenu: [],
+    role: 'file',
+    subMenu: [
+      // {
+      //   label: '新建文件',
+      //   role: 'newFile',
+      //   type: 'normal',
+      // },
+    ],
   },
   {
     label: '编辑',
-    accelerator: 'Alt+E',
-    subMenu: [],
+    role: 'edit',
+    subMenu: [
+      {
+        label: '新建文件',
+        role: 'newFile',
+        type: 'normal',
+        accelerator: ['Ctrl+N'],
+      },
+    ],
   },
   {
     label: '选择',
-    accelerator: 'Alt+S',
+    role: 'select',
     subMenu: [],
   },
   {
     label: '查看',
-    accelerator: 'Alt+V',
+    role: 'view',
     subMenu: [],
   },
   {
     label: '转到',
-    accelerator: 'Alt+G',
+    role: 'go',
     subMenu: [],
   },
   {
     label: '运行',
-    accelerator: 'Alt+R',
+    role: 'run',
     subMenu: [],
   },
   {
     label: '终端',
-    accelerator: 'Alt+T',
+    role: 'terminal',
     subMenu: [],
   },
   {
     label: '帮助',
-    accelerator: 'Alt+H',
+    role: 'help',
     subMenu: [],
   },
 ];

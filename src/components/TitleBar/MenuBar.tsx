@@ -22,7 +22,7 @@ const MenuBar: React.FC<MenuProps> = ({ menus }) => {
     >
       {menus.map((menu, i) => (
         <MenuButton
-          key={`${menu.label}+${i}`}
+          key={menu.role}
           selectedPath={selectedPath.value}
           path={i}
           {...menu}
