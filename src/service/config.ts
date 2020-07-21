@@ -5,6 +5,7 @@ export interface Dict {
   label: string;
   value: string;
   isLeaf: boolean;
+  levelCodeLen?: string;
   description?: string;
   children?: Dict[];
 }
@@ -47,3 +48,48 @@ export function getDictTypes(server: string) {
   req.cancel = source.cancel;
   return req;
 }
+
+export interface DictMeta {
+  levelCodeLen?: string;
+  levelNum?: string | number;
+  value: string;
+  label: string;
+}
+
+export function getDictMeta(server: string, dictType: string) {
+  const source = Axios.CancelToken.source();
+  const req = request.get(`/${server}/dictTypes/${dictType}`, {
+    cancelToken: source.token,
+  }) as CancellablePromise<ReqResponse<DictMeta[]>>;
+  req.cancel = source.cancel;
+  return req;
+}
+
+/**
+ * 废弃,请使用 components 内的 DictSelect
+ * @deprecated
+ */
+export const loadDict = (dictType: string, server: string) => {
+  return () => {
+    const req = getChildDict(server, dictType);
+    const reqNext = (req.then(resp => {
+      if (resp.isSuccess) {
+        return (
+          resp.data?.map(item => ({
+            label: item.label,
+            value: item.value,
+          })) || []
+        );
+      } else {
+        return Promise.reject(resp);
+      }
+    }) as any) as CancellablePromise<
+      {
+        label: string;
+        value: any;
+      }[]
+    >;
+    reqNext.cancel = req.cancel;
+    return reqNext;
+  };
+};

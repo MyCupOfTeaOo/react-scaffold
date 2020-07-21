@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useRef } from 'react';
+import React, { useEffect, useCallback, useRef, useMemo } from 'react';
 import { Cascader, Modal } from 'antd';
 import { useValue } from 'teaness';
 import {
@@ -7,9 +7,13 @@ import {
   CascaderValueType,
 } from 'antd/lib/cascader';
 import { getChildDict, Dict } from '@/service/config';
+import { splitCode } from './utils';
 
-export interface DictSelectProps extends Omit<CascaderProps, 'options'> {
+export interface DictSelectProps
+  extends Omit<CascaderProps, 'options' | 'value' | 'onChange'> {
   options?: CascaderOptionType[];
+  value?: string;
+  onChange?(value?: string, options?: CascaderOptionType[]): void;
   /**
    * @throws 不要使用,预留给useDict的接口
    */
@@ -26,6 +30,9 @@ export function dealWithDict(
     value: dict.value,
     isLeaf: !maxDepth || maxDepth > curDepth ? dict.isLeaf : true,
     depth: curDepth,
+    splitlens: dict.levelCodeLen?.split('-').map(len => parseInt(len, 10)) || [
+      0xffffff,
+    ],
     children:
       !maxDepth || maxDepth > curDepth
         ? dict.children?.map(item => dealWithDict(item, curDepth + 1, maxDepth))
@@ -34,31 +41,42 @@ export function dealWithDict(
   return options;
 }
 
+/**
+ * 只支持受控模式
+ */
 const DictSelect: React.FC<DictSelectProps> = ({
   options,
   hookLoad,
+  value,
+  onChange,
   ...rest
 }) => {
   const isChange = useValue(false);
-  const dictOptions = useValue<CascaderOptionType[]>([]);
-
-  const onChange = useCallback<Required<CascaderProps>['onChange']>(
-    (...args) => {
+  const splitlens = useValue<number[]>();
+  const change = useCallback<Required<CascaderProps>['onChange']>(
+    (v, option) => {
       isChange.value = true;
-      rest.onChange?.(...args);
+      onChange?.(v.join(''), option);
     },
     [],
   );
-  useEffect(() => {
-    if (rest.value && !isChange.value && hookLoad) {
-      hookLoad(rest.value);
+  const splitValue = useMemo<string[] | undefined>(() => {
+    if (value && splitlens.value) {
+      return splitCode(value, splitlens.value);
     }
-  }, [rest.value]);
+  }, [value, splitlens.value]);
+  useEffect(() => {
+    splitlens.value = options?.[0]?.splitlens;
+    if (splitValue && !isChange.value && hookLoad) {
+      hookLoad(splitValue);
+    }
+  }, [splitValue, options]);
   return (
     <Cascader
-      options={options || dictOptions.value || []}
+      options={options}
+      value={splitValue}
       {...rest}
-      onChange={onChange}
+      onChange={change}
     />
   );
 };
@@ -155,10 +173,14 @@ export function useDict(
         return Promise.resolve(true);
       }
       targetOption.loading = true;
+
       const req = getChildDict(
         server,
         dictType,
-        selectedOptions.map(selectedOption => selectedOption.value).join('-'),
+        [
+          ...(options?.rootCode || []),
+          ...selectedOptions.map(selectedOption => selectedOption.value),
+        ].join(''),
         !options?.loadOnDemand,
       );
       cancelSet.current.add(req.cancel);
@@ -181,7 +203,7 @@ export function useDict(
         });
       });
     },
-    [options?.maxDepth, server, dictType],
+    [options?.maxDepth, server, dictType, options?.rootCode?.join('-')],
   );
   // code是带分隔符的
   const depthLoad = useCallback((code: string) => {
@@ -239,7 +261,7 @@ export function useDict(
     const req = getChildDict(
       server,
       dictType,
-      options?.rootCode?.join('-'),
+      options?.rootCode?.join(''),
       !options?.loadOnDemand,
     );
     cancelSet.current.add(req.cancel);
@@ -277,32 +299,36 @@ export function useDict(
     };
   }, [dictType, server, options?.rootCode?.join('-'), options?.maxDepth]);
 
-  const hookLoad = useCallback((value: CascaderValueType) => {
-    if (!options?.loadOnDemand) {
-      return;
-    }
-    // 找到当前节点有没有加载
-    const needLoads: string[] = [];
-    getWaitLoadCodes(value, dictOptions.value).forEach(code => {
-      if (!waitLoads.current.has(code)) {
-        needLoads.push(code);
+  const hookLoad = useCallback(
+    (value: CascaderValueType) => {
+      if (!options?.loadOnDemand) {
+        return;
       }
-    });
-
-    if (needLoads.length) {
-      const arrayWaitLoads = Array.from(waitLoads.current);
-      needLoads.forEach(load => {
-        waitLoads.current.add(load);
+      const allCode = [...(options?.rootCode || []), ...value];
+      // 找到当前节点有没有加载
+      const needLoads: string[] = [];
+      getWaitLoadCodes(allCode, dictOptions.value).forEach(code => {
+        if (!waitLoads.current.has(code)) {
+          needLoads.push(code);
+        }
       });
-      if (
-        !arrayWaitLoads.some(item => {
-          return needLoads[0].indexOf(item) === 0;
-        })
-      ) {
-        depthLoad(needLoads[0]);
+
+      if (needLoads.length) {
+        const arrayWaitLoads = Array.from(waitLoads.current);
+        needLoads.forEach(load => {
+          waitLoads.current.add(load);
+        });
+        if (
+          !arrayWaitLoads.some(item => {
+            return needLoads[0].indexOf(item) === 0;
+          })
+        ) {
+          depthLoad(needLoads[0]);
+        }
       }
-    }
-  }, []);
+    },
+    [options?.rootCode?.join('-')],
+  );
   return {
     options: dictOptions.value,
     hookLoad,

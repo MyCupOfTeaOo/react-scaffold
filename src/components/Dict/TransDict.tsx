@@ -1,10 +1,11 @@
 /* eslint-disable no-nested-ternary */
 import React, { useEffect } from 'react';
 import { observable, flow } from 'mobx';
-import { getCurrentDict, Dict } from '@/service/config';
+import { getCurrentDict, Dict, DictMeta, getDictMeta } from '@/service/config';
 import { ReqResponse } from '@/utils/request';
 import { Circle } from 'teaness';
 import { observer } from 'mobx-react';
+import { splitCode } from './utils';
 
 export interface NodeType {
   label?: string;
@@ -15,6 +16,13 @@ export interface NodeType {
   };
 }
 
+export interface NodeMeta {
+  splitLens?: number[];
+  levelNum?: number;
+  label?: string;
+  state: 'ready' | 'loading' | 'success' | 'error' | 'notFound';
+}
+
 export interface CascaderCache {
   [key: string]: NodeType;
 }
@@ -22,6 +30,56 @@ export interface CascaderCache {
 export class Store {
   @observable
   cascaderCache: CascaderCache = {};
+
+  @observable
+  metaCache: Record<string, NodeMeta> = {};
+
+  setMetaCache = flow(function*(
+    this: Store,
+    server: string,
+    dictType: string,
+  ): any {
+    if (!this.metaCache[dictType]) {
+      this.metaCache[dictType] = {
+        state: 'ready',
+      };
+    }
+    const curMeta = this.metaCache[dictType];
+    switch (curMeta.state) {
+      case 'loading':
+      case 'notFound':
+      case 'success':
+        break;
+      case 'error':
+      case 'ready':
+      default:
+        // 加载元信息
+        // 失败重复请求三次
+        for (let i = 0; i < 3; i += 1) {
+          curMeta.state = 'loading';
+          const res: ReqResponse<DictMeta> = yield getDictMeta(
+            server,
+            dictType,
+          );
+          if (res.isSuccess) {
+            if (res.data) {
+              Object.assign(curMeta, {
+                state: 'success',
+                label: res.data.label,
+                levelNum: Number(res.data.levelNum),
+                splitLens: res.data.levelCodeLen
+                  ?.split('-')
+                  .map(item => parseInt(item, 10)) || [0xffffff],
+              } as NodeMeta);
+            } else {
+              curMeta.state = 'notFound';
+            }
+          } else {
+            console.error(res.msg);
+          }
+        }
+    }
+  });
 
   setCacheByDictTypeAndDictCode = flow(function*(
     this: Store,
@@ -66,7 +124,7 @@ export class Store {
               const resp: ReqResponse<Dict> = yield getCurrentDict(
                 server,
                 dictType,
-                codes.slice(0, index).join('-'),
+                codes.slice(0, index).join(''),
               );
               if (resp.isSuccess) {
                 if (!resp.data) {
@@ -98,31 +156,41 @@ const store = new Store();
 export { store };
 
 export function getTarget(
-  codes?: string[],
+  code?: string,
+  meta?: NodeMeta,
   node?: NodeType,
   joinFather?: boolean,
 ): {
   state: NodeType['state'];
   labels?: string[];
 } {
-  if (!codes) {
+  if (!code) {
     return {
       state: 'success',
       labels: [],
     };
   }
-
+  if (!meta) {
+    return {
+      state: 'loading',
+    };
+  }
   if (!node) {
     return {
       state: 'loading',
     };
   }
+  if (!meta.splitLens) {
+    return {
+      state: meta.state,
+    };
+  }
   let curNode: NodeType = node;
   // 后面赋值是为了方便类型推断
-  let next: NodeType = curNode.children[codes[0]];
+  let next: NodeType = curNode.children[code[0]];
   const strs: string[] = [];
   // 迭代 code 链,此处需要区分 joinFather 与 not join 的处理
-  for (const i of codes) {
+  for (const i of splitCode(code, meta.splitLens)) {
     next = curNode.children[i];
 
     if (next && joinFather) {
@@ -172,7 +240,7 @@ export interface TransDictProps {
   /**
    * 当前字典编码
    */
-  codes?: string[];
+  code?: string;
   /**
    * 字典类型
    */
@@ -222,45 +290,46 @@ export interface TransDictProps {
 /* -------------------------------------------------------------------------- */
 
 const TransDict: React.FC<TransDictProps> = props => {
+  // const codes = props.
+  useEffect(() => {
+    store.setMetaCache(props.server, props.type);
+  }, [props.type, props.server]);
+  const meta = store.metaCache[props.type];
   const target = getTarget(
-    props.codes,
+    props.code,
+    meta,
     store.cascaderCache[props.type],
     props.joinFather,
   );
   useEffect(() => {
-    if (props.codes && props.codes.length > 0 && props.type) {
+    if (props.code && props.type && meta?.splitLens) {
       store.setCacheByDictTypeAndDictCode(
         props.server,
         props.type,
-        props.codes,
+        splitCode(props.code, meta.splitLens),
         props.joinFather,
       );
     }
-  }, [props.codes, props.type, props.joinFather]);
+  }, [props.code, props.type, props.joinFather, meta?.splitLens]);
   switch (target.state) {
     case 'loading':
-      return <span>{props.loading || props.codes?.join(props.separator)}</span>;
+      return <span>{props.loading || props.code}</span>;
     case 'error':
-      return (
-        <span>{props.errorFound || props.codes?.join(props.separator)}</span>
-      );
+      return <span>{props.errorFound || props.code}</span>;
     case 'notFound':
-      return (
-        <span>{props.notFound || props.codes?.join(props.separator)}</span>
-      );
+      return <span>{props.notFound || props.code}</span>;
     default: {
       const element =
         target.labels && target.labels.length > 0
           ? props.showIndex
-            ? target.labels?.[props.showIndex] ??
-              (props.notFound || props.codes?.join(props.separator))
+            ? target.labels?.[props.showIndex] ?? (props.notFound || props.code)
             : target.labels
                 .splice(
                   props.rootIndex || 0,
                   target.labels.length - (props.rootIndex || 0),
                 )
                 .join(props.separator)
-          : props.notFound || props.codes?.join(props.separator);
+          : props.notFound || props.code;
       if (props.notDiv) return <React.Fragment>{element}</React.Fragment>;
       return <span>{element}</span>;
     }
