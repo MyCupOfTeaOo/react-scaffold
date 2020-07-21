@@ -91,7 +91,7 @@ export function getWaitLoadCodes(
   if (!codes[i]) return [];
   const target = options.find(option => option.value === codes[i]);
   if (target) {
-    return getWaitLoadCodes(codes, options, i + 1);
+    return getWaitLoadCodes(codes, target.children || [], i + 1);
   }
   return [...Array(codes.length - i)].map((_, index) =>
     codes.slice(0, i + 1 + index).join('-'),
@@ -156,7 +156,7 @@ export function useDict(
    * {rootCode} 根节点编码(可以直接从根节点查)
    * {maxDepth} 最大深度,可以指定查到某一级则不加载
    */
-  options?: { loadOnDemand?: boolean; rootCode?: string[]; maxDepth?: number },
+  options?: { loadOnDemand?: boolean; rootCode?: string; maxDepth?: number },
 ): DictSelectProps {
   const dictOptions = useValue<CascaderOptionType[]>([]);
   const cancelSet = useRef(new Set<() => void>());
@@ -177,10 +177,9 @@ export function useDict(
       const req = getChildDict(
         server,
         dictType,
-        [
-          ...(options?.rootCode || []),
-          ...selectedOptions.map(selectedOption => selectedOption.value),
-        ].join(''),
+        `${options?.rootCode || ''}${selectedOptions
+          .map(selectedOption => selectedOption.value)
+          .join('')}`,
         !options?.loadOnDemand,
       );
       cancelSet.current.add(req.cancel);
@@ -203,15 +202,15 @@ export function useDict(
         });
       });
     },
-    [options?.maxDepth, server, dictType, options?.rootCode?.join('-')],
+    [options?.maxDepth, server, dictType, options?.rootCode],
   );
   // code是带分隔符的
   const depthLoad = useCallback((code: string) => {
+    // 需要把 rootCode 剔除掉
     const selectOptions = getSelectedOptions(
       code.split('-'),
       dictOptions.value,
     );
-
     if (selectOptions?.length) {
       if (selectOptions[selectOptions.length - 1].isLeaf) {
         waitLoads.current.delete(code);
@@ -229,7 +228,6 @@ export function useDict(
         }
         return;
       }
-
       return loadData(selectOptions)?.then(res => {
         if (res) {
           waitLoads.current.delete(code);
@@ -261,7 +259,7 @@ export function useDict(
     const req = getChildDict(
       server,
       dictType,
-      options?.rootCode?.join(''),
+      options?.rootCode,
       !options?.loadOnDemand,
     );
     cancelSet.current.add(req.cancel);
@@ -297,22 +295,21 @@ export function useDict(
     return () => {
       cancelSet.current.forEach(cancel => cancel());
     };
-  }, [dictType, server, options?.rootCode?.join('-'), options?.maxDepth]);
+  }, [dictType, server, options?.rootCode, options?.maxDepth]);
 
   const hookLoad = useCallback(
     (value: CascaderValueType) => {
       if (!options?.loadOnDemand) {
         return;
       }
-      const allCode = [...(options?.rootCode || []), ...value];
+
       // 找到当前节点有没有加载
       const needLoads: string[] = [];
-      getWaitLoadCodes(allCode, dictOptions.value).forEach(code => {
-        if (!waitLoads.current.has(code)) {
-          needLoads.push(code);
+      getWaitLoadCodes(value, dictOptions.value, 0).forEach(loadCode => {
+        if (!waitLoads.current.has(loadCode)) {
+          needLoads.push(loadCode);
         }
       });
-
       if (needLoads.length) {
         const arrayWaitLoads = Array.from(waitLoads.current);
         needLoads.forEach(load => {
@@ -327,7 +324,7 @@ export function useDict(
         }
       }
     },
-    [options?.rootCode?.join('-')],
+    [options?.rootCode],
   );
   return {
     options: dictOptions.value,
