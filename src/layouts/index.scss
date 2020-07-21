@@ -45,6 +45,10 @@
   height: 100%;
   background: rgba($color: #f7f7f7, $alpha: 0);
 }
+.loading {
+  width: 100vw;
+  height: 100vh;
+}
 
 .sider {
   :global(.ant-layout-sider-zero-width-trigger) {

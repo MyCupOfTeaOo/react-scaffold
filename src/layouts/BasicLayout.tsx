@@ -107,7 +107,7 @@ const BasicLayout: React.FC<RouteProps & {
   if (loading) {
     return (
       <Spin size="large">
-        <div className={styles.normal} />
+        <div className={styles.loading} />
       </Spin>
     );
   }
@@ -115,7 +115,7 @@ const BasicLayout: React.FC<RouteProps & {
   if (!props.user.user) {
     return (
       <Spin size="large" tip="加载中...">
-        <div className={styles.normal} />
+        <div className={styles.loading} />
       </Spin>
     );
   }

@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import glob from 'glob';
 import path from 'path';
 import pages from './pages';
+import { projectName } from './projectConfig';
 
 const routes: IRoute[] = [
   {
@@ -23,6 +24,8 @@ const routes: IRoute[] = [
       {
         path: '/',
         component: '../layouts/BasicLayout',
+        Routes: ['src/components/PageTitle'],
+        title: projectName,
         routes: [{ path: '/', component: '.' }],
       },
     ],
@@ -44,9 +47,7 @@ function subPagesGen(routes?: RouteConfig[]): string {
       const subPageStr = subPagesGen(item.routes);
       const temp2 = `{
       component: ${
-        item.component
-          ? `require('${item.component}').default`
-          : undefined
+        item.component ? `require('${item.component}').default` : undefined
       },
         path: '${item.path}',
         isMenu: ${item.isMenu},
