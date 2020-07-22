@@ -5,7 +5,7 @@ import styles from './index.scss';
 import MenuItem from './MenuItem';
 
 const MenuButton: React.FC<MenuButtonProps> = props => {
-  const keyshort = props.role.charAt(0).toUpperCase();
+  const keyshort = props.role?.charAt(0).toUpperCase();
   const showSubMenu =
     props.selectedPath?.[0] === props.path &&
     props.selectedPath.length > 1 &&
@@ -16,14 +16,16 @@ const MenuButton: React.FC<MenuButtonProps> = props => {
       data-path={`0-${props.path}`}
       aria-label={props.label}
       aria-haspopup="true"
-      aria-keyshortcuts={`Alt+${keyshort}`}
+      aria-keyshortcuts={keyshort ? `Alt+${keyshort}` : keyshort}
       className={classname(styles.menuButton, {
         [styles.focus]: props.selectedPath?.[0] === props.path,
-        [styles.disable]: props.disabled,
+        [styles.disabled]: props.disabled,
       })}
     >
       <span>{props.label}</span>
-      {!props.disabled && <span className={styles.keyshort}>{keyshort}</span>}
+      {!props.disabled && keyshort && (
+        <span className={styles.keyshort}>{keyshort}</span>
+      )}
       {showSubMenu && (
         <div className={styles.menulist}>
           {props.subMenu.map((item, i) => (

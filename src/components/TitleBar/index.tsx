@@ -67,6 +67,9 @@ const menus: MenuButtonConfig[] = [
         ],
       },
       {
+        type: 'separator',
+      },
+      {
         label: '关于',
         role: 'abort',
         type: 'normal',

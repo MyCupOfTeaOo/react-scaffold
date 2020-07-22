@@ -1,12 +1,12 @@
 import { BrowserWindow } from 'electron';
 
 export interface MenuConfig {
-  label: string;
+  label?: string;
   onClick?(this: BrowserWindow): void;
   /**
    * 同一级不能重复
    */
-  role: string;
+  role?: string;
   type: 'normal' | 'separator' | 'submenu' | 'checkbox' | 'radio';
   accelerator?: string[];
   subMenu?: MenuConfig[];

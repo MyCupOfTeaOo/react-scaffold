@@ -5,27 +5,37 @@ import styles from './index.scss';
 import { replaceCtrl } from './hooks';
 
 const MenuItem: React.FC<MenuItemProps> = props => {
-  const keyshort = props.role.charAt(0).toUpperCase();
+  const keyshort = props.role?.charAt(0).toUpperCase();
   const showSubMenu =
     props.selectedPath?.[props.depth] === props.path &&
     props.selectedPath.length > props.depth + 1 &&
     (props.subMenu?.length || 0) > 0 &&
     !props.disabled;
+  if (props.type === 'separator') {
+    return (
+      <div
+        data-path={`${props.depth}-${props.path}`}
+        className={classnames(styles.menuItem, styles.separator)}
+      />
+    );
+  }
   return (
     <div
       className={classnames(styles.menuItem, {
         [styles.menuItemFocus]:
           props.selectedPath?.[props.depth] === props.path,
-        [styles.disable]: props.disabled,
+        [styles.disabled]: props.disabled,
       })}
       data-path={`${props.depth}-${props.path}`}
       aria-label={props.label}
       aria-haspopup={props.subMenu ? 'true' : 'false'}
-      aria-keyshortcuts={`Alt+${keyshort}`}
+      aria-keyshortcuts={keyshort ? `Alt+${keyshort}` : keyshort}
     >
       <span className={styles.menuItemLabel}>
         {props.label}
-        {!props.disabled && <span className={styles.keyshort}>{keyshort}</span>}
+        {!props.disabled && keyshort && (
+          <span className={styles.keyshort}>{keyshort}</span>
+        )}
       </span>
       <span className={styles.menuItemAccelerator}>
         {replaceCtrl(props.accelerator?.join(' '))}
