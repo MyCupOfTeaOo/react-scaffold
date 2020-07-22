@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Spin, Layout, Modal } from 'antd';
+import { Spin, Layout, Modal, message } from 'antd';
 import { MenuFoldOutlined } from '@ant-design/icons';
 import Redirect from 'umi/redirect';
 import { inject, observer } from 'mobx-react';
@@ -17,8 +17,94 @@ import User from '@/stores/User';
 import TitleBar from '@/components/TitleBar';
 import stores from '@/stores';
 import { getCurWindow } from '@/utils/window';
+import { MenuButtonConfig } from '@/components/TitleBar/typings';
 import { projectName } from '#/projectConfig';
 import styles from './index.scss';
+
+const menus: MenuButtonConfig[] = [
+  {
+    label: '文件',
+    role: 'file',
+    type: 'submenu',
+    subMenu: [
+      {
+        label: '退出',
+        role: 'quit',
+        type: 'normal',
+      },
+    ],
+  },
+  {
+    label: '编辑',
+    role: 'edit',
+    type: 'submenu',
+    subMenu: [
+      {
+        label: '撤销',
+        role: 'undo',
+        type: 'normal',
+        accelerator: ['Ctrl+Z'],
+      },
+      {
+        label: '恢复',
+        role: 'redo',
+        type: 'normal',
+        accelerator: ['Ctrl+Shift+Z', 'Ctrl+Y'],
+      },
+    ],
+  },
+  {
+    label: '帮助',
+    role: 'help',
+    type: 'submenu',
+    subMenu: [
+      {
+        label: '自动保存',
+        role: 'autosave',
+        type: 'checkbox',
+        checked: true,
+        onClick() {
+          message.success('开启自动保存');
+        },
+      },
+      {
+        label: '测试',
+        role: 'test',
+        type: 'submenu',
+        subMenu: [
+          {
+            label: '点击测试',
+            role: 'test',
+            type: 'normal',
+            disabled: true,
+          },
+        ],
+      },
+      {
+        type: 'separator',
+      },
+      {
+        label: '关于',
+        role: 'abort',
+        type: 'normal',
+        disabled: true,
+
+        onClick() {
+          message.success('暂无关于');
+        },
+      },
+      {
+        label: '检查更新',
+        role: 'update',
+        type: 'normal',
+        accelerator: ['Ctrl+U'],
+        onClick() {
+          message.success('暂无更新');
+        },
+      },
+    ],
+  },
+];
 
 const { Sider, Content } = Layout;
 
@@ -121,7 +207,7 @@ const BasicLayout: React.FC<RouteProps & {
   }
   return (
     <Layout className={styles.normal}>
-      <TitleBar />
+      <TitleBar logo={logo} menus={menus} />
       <Header
         logo={logo}
         title={projectName}
