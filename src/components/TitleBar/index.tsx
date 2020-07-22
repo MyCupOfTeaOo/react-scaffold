@@ -48,21 +48,12 @@ const menus: MenuButtonConfig[] = [
         label: '测试',
         role: 'test',
         type: 'submenu',
-        // disabled: true,
         subMenu: [
           {
             label: '点击测试',
             role: 'test',
             type: 'normal',
             disabled: true,
-          },
-          {
-            label: '关于',
-            role: 'abort',
-            type: 'normal',
-            onClick() {
-              message.success('暂无关于');
-            },
           },
         ],
       },
