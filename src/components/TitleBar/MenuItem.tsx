@@ -30,6 +30,14 @@ const MenuItem: React.FC<MenuItemProps> = props => {
       <span className={styles.menuItemAccelerator}>
         {replaceCtrl(props.accelerator?.join(' '))}
       </span>
+      {!props.disabled && props.type === 'submenu' && (
+        <span
+          className={classnames(
+            styles.rightArrow,
+            'codicon codicon-chevron-right',
+          )}
+        />
+      )}
       {showSubMenu && props.subMenu && (
         <span className={classnames(styles.menulist, styles.subMenu)}>
           {props.subMenu.map((menu, i) => (

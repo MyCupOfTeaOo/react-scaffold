@@ -144,6 +144,12 @@ $menulist-padding-top: 6px;
     color: #f8f8f2;
     background-color: rgba(204, 204, 204, 0.6);
   }
+  .rightArrow {
+    position: absolute;
+    line-height: $height !important;
+    right: 12px;
+  }
+
   .keyshort {
     display: none;
   }
