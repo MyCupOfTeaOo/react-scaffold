@@ -7,7 +7,7 @@ export interface MenuConfig {
    * 同一级不能重复
    */
   role?: string;
-  type: 'normal' | 'separator' | 'submenu' | 'checkbox' | 'radio';
+  type: 'normal' | 'separator' | 'submenu' | 'checkbox';
   accelerator?: string[];
   subMenu?: MenuConfig[];
   checked?: boolean;
