@@ -85,6 +85,10 @@ $btn-padding: 8px;
   &.focus {
     background-color: $back-hover;
   }
+  &.disable {
+    opacity: 0.4;
+    background: none !important;
+  }
 }
 .keyshort {
   &::before {
@@ -108,15 +112,7 @@ $btn-padding: 8px;
     }
   }
 }
-.menuItem {
-  display: flex;
-  .menuItemLabel {
-    flex: 1 1 auto;
-  }
-  .keyshort {
-    display: none;
-  }
-}
+
 $menuitem-padding: 26px;
 $menulist-padding-top: 6px;
 
@@ -133,15 +129,13 @@ $menulist-padding-top: 6px;
 .subMenu {
   margin-top: -$menulist-padding-top;
   width: auto;
-  // transform: translatex(
-  //   calc(100% - #{$menuitem-padding - $menulist-padding-top})
-  // );
   margin-left: calc(100% - #{$menuitem-padding + 2px});
   white-space: nowrap;
 }
 
 .menuItem {
   $height: 24px;
+  display: flex;
   height: $height;
   line-height: $height;
   padding: 0 $menuitem-padding;
@@ -150,7 +144,17 @@ $menulist-padding-top: 6px;
     color: #f8f8f2;
     background-color: rgba(204, 204, 204, 0.6);
   }
+  .keyshort {
+    display: none;
+  }
+
   .menuItemLabel {
+    flex: 1 1 auto;
     margin-right: 52px;
+  }
+  &.disable {
+    opacity: 0.4;
+    color: inherit;
+    background: none !important;
   }
 }

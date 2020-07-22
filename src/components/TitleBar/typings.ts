@@ -1,6 +1,8 @@
+import { BrowserWindow } from 'electron';
+
 export interface MenuConfig {
   label: string;
-  onClick?(): void;
+  onClick?(this: BrowserWindow): void;
   /**
    * 同一级不能重复
    */

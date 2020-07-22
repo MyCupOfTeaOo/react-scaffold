@@ -1,4 +1,5 @@
 import { BrowserWindow } from 'electron';
+import { getApp } from '@/utils/window';
 
 export const roleMap: Record<string, (this: BrowserWindow) => void> = {
   undo() {
@@ -58,7 +59,9 @@ export const roleMap: Record<string, (this: BrowserWindow) => void> = {
   hide() {},
   hideOthers() {},
   unhide() {},
-  quit() {},
+  quit() {
+    getApp().quit();
+  },
   startSpeaking() {},
   stopSpeaking() {},
   zoom() {},

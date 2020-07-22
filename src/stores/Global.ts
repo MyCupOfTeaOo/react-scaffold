@@ -3,11 +3,9 @@ import { debounce } from 'lodash';
 import { getOprs } from '@/service/permission';
 import cache from '@/utils/cache';
 import { ReqResponse } from '@/utils/request';
-import { remote } from 'electron';
+import { getCurWindow } from '@/utils/window';
 import { sysId } from '#/projectConfig';
 import { RootStore } from '.';
-
-const win = remote.getCurrentWindow();
 
 export interface MenuId2Url {
   [key: string]: string;
@@ -46,6 +44,7 @@ export default class Global {
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
+    const win = getCurWindow();
     win.on('maximize', () => {
       this.isMaximized = true;
     });
@@ -79,13 +78,13 @@ export default class Global {
 
   @action
   maximize = () => {
-    win.maximize();
+    getCurWindow().maximize();
     this.isMaximized = true;
   };
 
   @action
   unmaximize = () => {
-    win.unmaximize();
+    getCurWindow().unmaximize();
     this.isMaximized = false;
   };
 

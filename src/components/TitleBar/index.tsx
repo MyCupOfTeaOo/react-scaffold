@@ -5,6 +5,7 @@ import styles from './index.scss';
 import Control from './Control';
 import MenuBar from './MenuBar';
 import { MenuButtonConfig } from './typings';
+import { useAccelerator } from './hooks';
 
 const menus: MenuButtonConfig[] = [
   {
@@ -13,8 +14,8 @@ const menus: MenuButtonConfig[] = [
     type: 'submenu',
     subMenu: [
       {
-        label: '新建文件',
-        role: 'newFile',
+        label: '退出',
+        role: 'quit',
         type: 'normal',
       },
     ],
@@ -25,124 +26,60 @@ const menus: MenuButtonConfig[] = [
     type: 'submenu',
     subMenu: [
       {
-        label: '新建文件',
-        role: 'newFile',
+        label: '撤销',
+        role: 'undo',
         type: 'normal',
-        onClick() {
-          message.success('新建文件');
-        },
-        accelerator: ['Ctrl+N'],
+        accelerator: ['Ctrl+Z'],
       },
       {
-        label: '文件打开',
-        role: 'fileOpen',
-        type: 'submenu',
-        accelerator: ['Ctrl+O'],
-        subMenu: [
-          {
-            label: '新建文件111',
-            role: 'newFile',
-            type: 'submenu',
-            onClick() {
-              message.success('新建文件');
-            },
-            accelerator: ['Ctrl+N'],
-            subMenu: [
-              {
-                label: '新建文件',
-                role: 'newFile',
-                type: 'normal',
-                onClick() {
-                  message.success('新建文件');
-                },
-                accelerator: ['Ctrl+N'],
-              },
-              {
-                label: '文件打开',
-                role: 'fileOpen',
-                type: 'normal',
-                accelerator: ['Ctrl+O'],
-              },
-              {
-                label: '文件上传',
-                role: 'fileUpload',
-                type: 'normal',
-                onClick() {
-                  message.success('新建文件');
-                },
-                accelerator: ['Ctrl+U'],
-              },
-            ],
-          },
-          {
-            label: '文件打开1111',
-            role: 'fileOpen',
-            type: 'normal',
-            accelerator: ['Ctrl+O'],
-          },
-          {
-            label: '文件上传',
-            role: 'fileUpload',
-            type: 'normal',
-            onClick() {
-              message.success('新建文件');
-            },
-            accelerator: ['Ctrl+U'],
-          },
-        ],
-      },
-      {
-        label: '文件上传',
-        role: 'fileUpload',
+        label: '恢复',
+        role: 'redo',
         type: 'normal',
-        onClick() {
-          message.success('新建文件');
-        },
-        accelerator: ['Ctrl+U'],
+        accelerator: ['Ctrl+Shift+Z', 'Ctrl+Y'],
       },
     ],
-  },
-  {
-    label: '选择',
-    role: 'select',
-    type: 'submenu',
-    subMenu: [],
-  },
-  {
-    label: '查看',
-    role: 'view',
-    type: 'submenu',
-    subMenu: [],
-  },
-  {
-    label: '转到',
-    role: 'go',
-    type: 'submenu',
-    subMenu: [],
-  },
-  {
-    label: '运行',
-    role: 'run',
-    type: 'submenu',
-    subMenu: [],
-  },
-  {
-    label: '终端',
-    role: 'terminal',
-    type: 'submenu',
-    subMenu: [],
   },
   {
     label: '帮助',
     role: 'help',
     type: 'submenu',
-    subMenu: [],
+    subMenu: [
+      {
+        label: '测试',
+        role: 'test',
+        type: 'normal',
+        disabled: true,
+        onClick() {
+          message.success('测试');
+        },
+      },
+      {
+        label: '关于',
+        role: 'abort',
+        type: 'normal',
+        disabled: true,
+
+        onClick() {
+          message.success('暂无关于');
+        },
+      },
+      {
+        label: '检查更新',
+        role: 'update',
+        type: 'normal',
+        accelerator: ['Ctrl+U'],
+        onClick() {
+          message.success('暂无更新');
+        },
+      },
+    ],
   },
 ];
 
 interface TitleBar {}
 
 const TitleBar: React.FC<TitleBar> = () => {
+  useAccelerator(menus);
   return (
     <div className={styles.container}>
       <div className={styles.drag} />

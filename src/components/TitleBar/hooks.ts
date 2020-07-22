@@ -1,9 +1,71 @@
 import { useValue } from 'teaness';
 import lodash from 'lodash';
 import { useEffect, RefObject, useRef, useCallback } from 'react';
+import hotkeys from 'hotkeys-js';
+import { getCurWindow } from '@/utils/window';
 import { MenuButtonConfig, MenuConfig } from './typings';
+import { roleMap } from './role';
 
 /* eslint-disable no-param-reassign */
+const CMD = '⌘';
+const CTRL = 'Ctrl';
+
+export function replaceCtrl(str?: string) {
+  return str?.replace(
+    new RegExp(`${CMD}|${CTRL}`, 'gi'),
+    process.platform === 'darwin' ? CMD : CTRL,
+  );
+}
+
+// 转化成扁平的一维数组,并且过滤掉没有快捷键的
+export function parseAcceleratorMenus(
+  menus: MenuConfig[],
+): {
+  accelerator: string[];
+  runIt(): void;
+}[] {
+  return menus.reduce<
+    {
+      accelerator: string[];
+      runIt(): void;
+    }[]
+  >((parseMenu, menu) => {
+    if (menu.accelerator) {
+      const accelerator = menu.accelerator.map(str => {
+        if (/ctrl|⌘/gi.test(str)) {
+          return [CMD, CTRL]
+            .map(item => str.replace(/ctrl|⌘/gi, item))
+            .join(',');
+        }
+        return str;
+      });
+      parseMenu.push({
+        runIt() {
+          execMenu(menu);
+        },
+        accelerator,
+      });
+    }
+    if (menu.subMenu) {
+      parseMenu.push(...parseAcceleratorMenus(menu.subMenu));
+    }
+    return parseMenu;
+  }, []);
+}
+
+export function useAccelerator(menus: MenuConfig[]) {
+  useEffect(() => {
+    const hasAcceleratorMenus = parseAcceleratorMenus(menus);
+    hasAcceleratorMenus.forEach(menu => {
+      hotkeys(menu.accelerator.join(','), menu.runIt);
+    });
+    return () => {
+      hasAcceleratorMenus.forEach(menu => {
+        hotkeys.unbind(menu.accelerator.join(','), menu.runIt);
+      });
+    };
+  }, [menus]);
+}
 
 function genKeyshortPath(
   menus: MenuConfig[],
@@ -74,6 +136,61 @@ function genKeyshortPath(
   return rolePath;
 }
 
+function getMenuConfig(selectedPath: number[], menus: MenuConfig[]) {
+  return lodash.get(
+    menus,
+    selectedPath.reduce<string>((str, path) => {
+      if (path === -1) return str;
+      return `${str}${str ? '.subMenu.' : ''}${path}`;
+    }, ''),
+  ) as MenuConfig;
+}
+export function execMenu(menu: MenuConfig) {
+  if (menu.disabled) return;
+  const win = getCurWindow();
+  if (menu.onClick) {
+    menu.onClick.apply(win);
+  }
+  const role = roleMap[menu.role];
+  if (role) {
+    role.apply(win);
+  }
+}
+
+export function getUpPath(menus: MenuConfig[], curPath: number): number {
+  const curLength = menus.length;
+  if (curPath < 1) {
+    const next = curLength - 1;
+    if (menus[next].disabled) {
+      return getUpPath(menus, next);
+    }
+    return next;
+  } else {
+    const next = curPath - 1;
+    if (menus[next].disabled) {
+      return getUpPath(menus, next);
+    }
+    return next;
+  }
+}
+
+export function getDownPath(menus: MenuConfig[], curPath: number): number {
+  const curLength = menus.length;
+  if (curPath > curLength - 2) {
+    const next = 0;
+    if (menus[next].disabled) {
+      return getDownPath(menus, next);
+    }
+    return next;
+  } else {
+    const next = curPath + 1;
+    if (menus[next].disabled) {
+      return getDownPath(menus, next);
+    }
+    return next;
+  }
+}
+
 export function useKeyshortPath(menus: MenuConfig[], selectedPath: string) {
   const rolePath = useValue<
     Record<
@@ -99,7 +216,7 @@ export function useSelectedPath(
   const altPress = useValue(false);
   const altPressing = useRef(false);
   const focus = useValue(false);
-  const roleMap = useKeyshortPath(menus, selectedPath.value.join('*'));
+  const shortkeyMap = useKeyshortPath(menus, selectedPath.value.join('*'));
   const clear = useCallback(() => {
     focus.value = false;
     altPress.value = false;
@@ -116,7 +233,8 @@ export function useSelectedPath(
           const tp = [...selectedPath.value];
           tp.splice(depth, tp.length - depth);
           tp.push(index);
-          if (focus.value) {
+          const menu = getMenuConfig(tp, menus);
+          if (focus.value && menu.type === 'submenu') {
             tp.push(-1);
           }
           selectedPath.value = tp;
@@ -145,9 +263,24 @@ export function useSelectedPath(
             selectedPath.value = tp;
             return;
           }
-          tp.splice(depth, tp.length - depth);
-          tp.push(index);
-          selectedPath.value = tp;
+          const menu = getMenuConfig(
+            selectedPath.value.slice(0, depth + 1),
+            menus,
+          );
+          if (menu) {
+            if (menu.type === 'submenu') {
+              const thePath = path
+                .split('-')
+                .map(p => parseInt(p, 10))
+                .filter(p => p !== -1);
+              selectedPath.value = [...thePath, 0];
+            } else {
+              if (menu.disabled) return;
+              clear();
+              execMenu(menu);
+            }
+          }
+
           return;
         }
       }
@@ -156,23 +289,20 @@ export function useSelectedPath(
       switch (e.keyCode) {
         /* enter */
         case 13: {
-          const target = lodash.get(
+          const target = getMenuConfig(
+            selectedPath.value.filter(item => item !== -1),
             menus,
-            selectedPath.value.reduce<string>((str, path) => {
-              return `${str}${str ? '.subMenu.' : ''}${path}`;
-            }, ''),
-          ) as MenuConfig;
-
-          if (target) {
+          );
+          if (target && !target.disabled) {
             clear();
-            target.onClick?.();
+            execMenu(target);
           }
-          break;
+          return;
         }
         /* esc */
         case 27: {
           clear();
-          break;
+          return;
         }
         /* down */
         case 40: {
@@ -199,55 +329,19 @@ export function useSelectedPath(
 
             if (target) {
               const curPath = selectedPath.value[selectedPath.value.length - 1];
-              const curLength = target.subMenu?.length || 0;
-              if (curPath > curLength - 2) {
-                selectedPath.value = [
-                  ...selectedPath.value.slice(0, selectedPath.value.length - 1),
-                  0,
-                ];
-              } else {
-                selectedPath.value = [
-                  ...selectedPath.value.slice(0, selectedPath.value.length - 1),
-                  curPath + 1,
-                ];
-              }
+              selectedPath.value = [
+                ...selectedPath.value.slice(0, selectedPath.value.length - 1),
+                getDownPath(target.subMenu || [], curPath),
+              ];
             }
           }
-          break;
+          return;
         }
         /* right */
         case 39: {
           if (!altPressing.current && altPress.value) {
-            if (
-              selectedPath.value.length === 1 ||
-              (selectedPath.value.length === 2 && selectedPath.value[1] === -1)
-            ) {
-              const curPath = selectedPath.value[0];
-              if (curPath > menus.length - 2) {
-                selectedPath.value = [0, 0];
-              } else {
-                selectedPath.value = [curPath + 1, 0];
-              }
-            } else {
-              const target =
-                selectedPath.value.length > 2 &&
-                selectedPath.value[selectedPath.value.length - 1] === -1
-                  ? (lodash.get(
-                      menus,
-                      selectedPath.value
-                        .slice(0, selectedPath.value.length - 1)
-                        .reduce<string>((str, path) => {
-                          return `${str}${str ? '.subMenu.' : ''}${path}`;
-                        }, ''),
-                    ) as MenuConfig)
-                  : (lodash.get(
-                      menus,
-                      selectedPath.value
-                        .slice(0, selectedPath.value.length)
-                        .reduce<string>((str, path) => {
-                          return `${str}${str ? '.subMenu.' : ''}${path}`;
-                        }, ''),
-                    ) as MenuConfig);
+            if (selectedPath.value.filter(item => item !== -1).length > 1) {
+              const target = getMenuConfig(selectedPath.value, menus);
               if (target) {
                 if (target.subMenu) {
                   const tempPath =
@@ -257,26 +351,22 @@ export function useSelectedPath(
                           selectedPath.value.length - 1,
                         )
                       : selectedPath.value;
-                  selectedPath.value = [...tempPath, 0];
-                } else {
-                  const curPath = selectedPath.value[0];
-                  if (curPath > menus.length - 2) {
-                    selectedPath.value = [0, 0];
-                  } else {
-                    selectedPath.value = [curPath + 1, 0];
-                  }
-                }
-              } else {
-                const curPath = selectedPath.value[0];
-                if (curPath > menus.length - 2) {
-                  selectedPath.value = [0, 0];
-                } else {
-                  selectedPath.value = [curPath + 1, 0];
+                  const index = target.subMenu.findIndex(
+                    menu => !menu.disabled,
+                  );
+                  selectedPath.value = [...tempPath, index];
+                  return;
                 }
               }
             }
+            const curPath = selectedPath.value[0];
+            const nextMenuBtnIndex = getDownPath(menus, curPath);
+            selectedPath.value = [
+              getDownPath(menus, curPath),
+              menus[nextMenuBtnIndex].subMenu.findIndex(menu => !menu.disabled),
+            ];
           }
-          break;
+          return;
         }
         /* up */
         case 38: {
@@ -302,22 +392,13 @@ export function useSelectedPath(
                   ) as MenuConfig);
             if (target) {
               const curPath = selectedPath.value[selectedPath.value.length - 1];
-              const curLength = target.subMenu?.length || 0;
-
-              if (curPath < 1) {
-                selectedPath.value = [
-                  ...selectedPath.value.slice(0, selectedPath.value.length - 1),
-                  curLength - 1,
-                ];
-              } else {
-                selectedPath.value = [
-                  ...selectedPath.value.slice(0, selectedPath.value.length - 1),
-                  curPath - 1,
-                ];
-              }
+              selectedPath.value = [
+                ...selectedPath.value.slice(0, selectedPath.value.length - 1),
+                getUpPath(target.subMenu || [], curPath),
+              ];
             }
           }
-          break;
+          return;
         }
         /* left */
         case 37: {
@@ -329,14 +410,16 @@ export function useSelectedPath(
               );
             } else {
               const curPath = selectedPath.value[0];
-              if (curPath < 1) {
-                selectedPath.value = [menus.length - 1, 0];
-              } else {
-                selectedPath.value = [curPath - 1, 0];
-              }
+              const nextMenuBtnIndex = getUpPath(menus, curPath);
+              selectedPath.value = [
+                nextMenuBtnIndex,
+                menus[nextMenuBtnIndex].subMenu.findIndex(
+                  menu => !menu.disabled,
+                ),
+              ];
             }
           }
-          break;
+          return;
         }
         default: {
           if (e.key === 'Alt') {
@@ -353,7 +436,7 @@ export function useSelectedPath(
               ref.current?.focus();
             }
           } else if (altPress.value && /^[a-z]$/i.test(e.key)) {
-            const target = roleMap.value[e.key.toUpperCase()];
+            const target = shortkeyMap.value[e.key.toUpperCase()];
             if (target) {
               if (target.muti || target.menu.subMenu) {
                 selectedPath.value = target.path
@@ -362,7 +445,7 @@ export function useSelectedPath(
                 // }
               } else {
                 clear();
-                target.menu.onClick?.();
+                execMenu(target.menu);
               }
             }
           }

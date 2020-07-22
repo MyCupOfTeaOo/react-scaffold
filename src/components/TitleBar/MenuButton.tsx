@@ -9,16 +9,17 @@ const MenuButton: React.FC<MenuButtonProps> = props => {
   const showSubMenu =
     props.selectedPath?.[0] === props.path &&
     props.selectedPath.length > 1 &&
-    props.subMenu.length > 0;
+    props.subMenu.length > 0 &&
+    !props.disabled;
   return (
     <div
       data-path={`0-${props.path}`}
       aria-label={props.label}
       aria-haspopup="true"
       aria-keyshortcuts={`Alt+${keyshort}`}
-      tabIndex={0}
       className={classname(styles.menuButton, {
         [styles.focus]: props.selectedPath?.[0] === props.path,
+        [styles.disable]: props.disabled,
       })}
     >
       <span>{props.label}</span>

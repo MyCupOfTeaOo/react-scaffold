@@ -2,10 +2,8 @@ import React from 'react';
 import classname from 'classnames';
 import { observer } from 'mobx-react';
 import stores from '@/stores';
-import { remote } from 'electron';
+import { getCurWindow } from '@/utils/window';
 import styles from './index.scss';
-
-const win = remote.getCurrentWindow();
 
 interface ControlProps {}
 
@@ -14,7 +12,7 @@ const Control: React.FC<ControlProps> = () => {
     <div className={styles.controlLayout}>
       <div
         onClick={() => {
-          win.minimize();
+          getCurWindow().minimize();
         }}
         className={classname(
           styles.controlIcon,
@@ -42,7 +40,7 @@ const Control: React.FC<ControlProps> = () => {
           'codicon codicon-chrome-close',
         )}
         onClick={() => {
-          win.close();
+          getCurWindow().close();
         }}
       />
     </div>

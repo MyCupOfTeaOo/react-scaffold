@@ -3,7 +3,6 @@ import { Spin, Layout, Modal } from 'antd';
 import { MenuFoldOutlined } from '@ant-design/icons';
 import Redirect from 'umi/redirect';
 import { inject, observer } from 'mobx-react';
-import { remote } from 'electron';
 import { getMenuData } from '@/service/permission';
 import pages from '@/pages/.pages';
 import { getToken } from '@/utils/authority';
@@ -17,6 +16,7 @@ import Global from '@/stores/Global';
 import User from '@/stores/User';
 import TitleBar from '@/components/TitleBar';
 import stores from '@/stores';
+import { getCurWindow } from '@/utils/window';
 import { projectName } from '#/projectConfig';
 import styles from './index.scss';
 
@@ -42,8 +42,8 @@ const BasicLayout: React.FC<RouteProps & {
     if (!getToken()) return;
     // 进入下次循环等页面渲染好了
     setTimeout(() => {
-      const currentWin = remote.getCurrentWindow();
       stores.global.maximize();
+      const currentWin = getCurWindow();
       currentWin.setAlwaysOnTop(false);
       setTimeout(() => {
         currentWin.setOpacity(1);

@@ -1,8 +1,18 @@
 import { remote } from 'electron';
 import { router } from 'umi';
 
+const currentWin = remote.getCurrentWindow();
+const { app } = remote;
+
+export function getCurWindow() {
+  return currentWin;
+}
+
+export function getApp() {
+  return app;
+}
+
 export function getWelcomeWindow() {
-  const currentWin = remote.getCurrentWindow();
   currentWin.setOpacity(0);
   router.replace('/');
   currentWin.setMaximizable(true);
@@ -12,7 +22,6 @@ export function getWelcomeWindow() {
 }
 
 export function getLoginWindow() {
-  const currentWin = remote.getCurrentWindow();
   currentWin.setOpacity(0);
   currentWin.unmaximize();
   currentWin.setAlwaysOnTop(true);
