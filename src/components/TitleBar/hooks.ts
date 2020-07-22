@@ -92,6 +92,7 @@ function genKeyshortPath(
   }
 > {
   menus.forEach((menu, i) => {
+    if (menu.disabled) return;
     const path = fatherPath ? `${fatherPath}*${i}` : `${i}`;
     const realPath = menu.type === 'submenu' ? `${path}*0` : path;
     const keyshort = menu.role.charAt(0).toUpperCase();

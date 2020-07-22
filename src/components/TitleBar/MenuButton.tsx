@@ -23,7 +23,7 @@ const MenuButton: React.FC<MenuButtonProps> = props => {
       })}
     >
       <span>{props.label}</span>
-      <span className={styles.keyshort}>{keyshort}</span>
+      {!props.disabled && <span className={styles.keyshort}>{keyshort}</span>}
       {showSubMenu && (
         <div className={styles.menulist}>
           {props.subMenu.map((item, i) => (

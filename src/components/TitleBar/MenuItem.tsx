@@ -25,7 +25,7 @@ const MenuItem: React.FC<MenuItemProps> = props => {
     >
       <span className={styles.menuItemLabel}>
         {props.label}
-        <span className={styles.keyshort}>{keyshort}</span>
+        {!props.disabled && <span className={styles.keyshort}>{keyshort}</span>}
       </span>
       <span className={styles.menuItemAccelerator}>
         {replaceCtrl(props.accelerator?.join(' '))}
