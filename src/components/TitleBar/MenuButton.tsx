@@ -34,7 +34,7 @@ const MenuButton: React.FC<MenuButtonProps> = props => {
               depth={1}
               path={i}
               selectedPath={props.selectedPath}
-              key={item.role}
+              key={item.role || i}
             />
           ))}
         </div>

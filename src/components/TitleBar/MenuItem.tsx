@@ -31,6 +31,9 @@ const MenuItem: React.FC<MenuItemProps> = props => {
       aria-haspopup={props.subMenu ? 'true' : 'false'}
       aria-keyshortcuts={keyshort ? `Alt+${keyshort}` : keyshort}
     >
+      {props.checked && props.type === 'checkbox' && (
+        <span className={classnames(styles.check, 'codicon codicon-check')} />
+      )}
       <span className={styles.menuItemLabel}>
         {props.label}
         {!props.disabled && keyshort && (
@@ -40,6 +43,7 @@ const MenuItem: React.FC<MenuItemProps> = props => {
       <span className={styles.menuItemAccelerator}>
         {replaceCtrl(props.accelerator?.join(' '))}
       </span>
+
       {!props.disabled && props.type === 'submenu' && (
         <span
           className={classnames(
@@ -54,7 +58,7 @@ const MenuItem: React.FC<MenuItemProps> = props => {
             <MenuItem
               {...menu}
               path={i}
-              key={menu.label}
+              key={menu.label || i}
               selectedPath={props.selectedPath}
               depth={props.depth + 1}
             />

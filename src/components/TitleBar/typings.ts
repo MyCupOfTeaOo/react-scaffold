@@ -10,6 +10,7 @@ export interface MenuConfig {
   type: 'normal' | 'separator' | 'submenu' | 'checkbox' | 'radio';
   accelerator?: string[];
   subMenu?: MenuConfig[];
+  checked?: boolean;
   disabled?: boolean;
 }
 

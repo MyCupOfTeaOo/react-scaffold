@@ -45,6 +45,15 @@ const menus: MenuButtonConfig[] = [
     type: 'submenu',
     subMenu: [
       {
+        label: '自动保存',
+        role: 'autosave',
+        type: 'checkbox',
+        checked: true,
+        onClick() {
+          message.success('开启自动保存');
+        },
+      },
+      {
         label: '测试',
         role: 'test',
         type: 'submenu',

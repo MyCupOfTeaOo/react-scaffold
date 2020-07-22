@@ -10,6 +10,7 @@ const createWindow = () => {
       // 关闭在后台不渲染的优化
       backgroundThrottling: false,
       nativeWindowOpen: true,
+      minimumFontSize: 6,
     },
     backgroundColor: '#f5f5f5',
     titleBarStyle: 'hidden',

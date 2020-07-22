@@ -147,7 +147,7 @@ function getMenuConfig(selectedPath: number[], menus: MenuConfig[]) {
   ) as MenuConfig;
 }
 export function execMenu(menu: MenuConfig) {
-  if (menu.disabled || menu.type !== 'separator') return;
+  if (menu.disabled || menu.type === 'separator') return;
   const win = getCurWindow();
   if (menu.onClick) {
     menu.onClick.apply(win);
