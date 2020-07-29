@@ -196,10 +196,14 @@ function SignIn(props: SignInProps) {
               <div className={styles.submit}>
                 <div />
                 <div className={styles.submitWrapper}>
-                  <Fab onClick={submit} type="submit" disabled={loading}>
+                  <Fab
+                    onClick={submit}
+                    type="submit"
+                    disabled={loading || logining}
+                  >
                     <ArrowForwardIcon />
                   </Fab>
-                  {loading && (
+                  {(loading || logining) && (
                     <CircularProgress
                       size={68}
                       className={styles.fabProgress}
