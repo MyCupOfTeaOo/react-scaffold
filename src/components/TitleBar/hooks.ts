@@ -236,7 +236,7 @@ export function useSelectedPath(
           tp.splice(depth, tp.length - depth);
           tp.push(index);
           const menu = getMenuConfig(tp, menus);
-          if (focus.value && menu.type === 'submenu') {
+          if (focus.value && menu.type === 'submenu' && !menu.disabled) {
             tp.push(-1);
           }
           selectedPath.value = tp;
@@ -255,11 +255,16 @@ export function useSelectedPath(
           const [depthStr, indexStr] = path.split('-');
           const depth = parseInt(depthStr, 10);
           const index = parseInt(indexStr, 10);
+          // 按下的第一层菜单
           if (depth < 1) {
             focus.value = !focus.value;
+            if (!focus.value) {
+              selectedPath.value = [index];
+              return;
+            }
           }
-          const tp = [...selectedPath.value];
           if (selectedPath.value.length < 2) {
+            const tp = [...selectedPath.value];
             tp.splice(depth, tp.length - depth);
             tp.push(index, -1);
             selectedPath.value = tp;
@@ -271,11 +276,9 @@ export function useSelectedPath(
           );
           if (menu) {
             if (menu.type === 'submenu') {
-              const thePath = path
-                .split('-')
-                .map(p => parseInt(p, 10))
-                .filter(p => p !== -1);
-              selectedPath.value = [...thePath, 0];
+              if (!menu.disabled && selectedPath.value.length < depth + 2) {
+                selectedPath.value = [...selectedPath.value, -1];
+              }
             } else {
               if (menu.disabled || menu.type === 'separator') return;
               clear();
@@ -295,6 +298,13 @@ export function useSelectedPath(
             selectedPath.value.filter(item => item !== -1),
             menus,
           );
+          if (target.subMenu && !target.disabled) {
+            selectedPath.value = [
+              ...selectedPath.value,
+              getDownPath(target.subMenu, -1),
+            ];
+            return;
+          }
           if (target && !target.disabled && target.type !== 'separator') {
             clear();
             execMenu(target);
@@ -344,30 +354,24 @@ export function useSelectedPath(
           if (!altPressing.current && altPress.value) {
             if (selectedPath.value.filter(item => item !== -1).length > 1) {
               const target = getMenuConfig(selectedPath.value, menus);
-              if (target) {
-                if (target.subMenu) {
-                  const tempPath =
-                    selectedPath.value[selectedPath.value.length - 1] === -1
-                      ? selectedPath.value.slice(
-                          0,
-                          selectedPath.value.length - 1,
-                        )
-                      : selectedPath.value;
-                  const index = target.subMenu.findIndex(
-                    menu => !menu.disabled && menu.type === 'separator',
-                  );
-                  selectedPath.value = [...tempPath, index];
-                  return;
-                }
+              if (target?.subMenu && !target.disabled) {
+                const tempPath =
+                  selectedPath.value[selectedPath.value.length - 1] === -1
+                    ? selectedPath.value.slice(0, selectedPath.value.length - 1)
+                    : selectedPath.value;
+
+                selectedPath.value = [
+                  ...tempPath,
+                  getDownPath(target.subMenu, -1),
+                ];
+                return;
               }
             }
             const curPath = selectedPath.value[0];
             const nextMenuBtnIndex = getDownPath(menus, curPath);
             selectedPath.value = [
-              getDownPath(menus, curPath),
-              menus[nextMenuBtnIndex].subMenu.findIndex(
-                menu => !menu.disabled && menu.type === 'separator',
-              ),
+              nextMenuBtnIndex,
+              getDownPath(menus[nextMenuBtnIndex].subMenu, -1),
             ];
           }
           return;
@@ -417,9 +421,7 @@ export function useSelectedPath(
               const nextMenuBtnIndex = getUpPath(menus, curPath);
               selectedPath.value = [
                 nextMenuBtnIndex,
-                menus[nextMenuBtnIndex].subMenu.findIndex(
-                  menu => !menu.disabled && menu.type !== 'separator',
-                ),
+                getDownPath(menus[nextMenuBtnIndex].subMenu, -1),
               ];
             }
           }
