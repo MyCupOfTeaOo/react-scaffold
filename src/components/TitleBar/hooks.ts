@@ -259,6 +259,7 @@ export function useSelectedPath(
           if (depth < 1) {
             focus.value = !focus.value;
             if (!focus.value) {
+              altPress.value = false;
               selectedPath.value = [index];
               return;
             }
