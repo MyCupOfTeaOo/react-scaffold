@@ -132,7 +132,7 @@ export function useRequest<
 ) {
   const {
     showError = true,
-    showSuccess = !options.first,
+    showSuccess,
     cancel,
     first,
     onSuccess,
