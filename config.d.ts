@@ -12,6 +12,8 @@ declare global {
     title?: string;
     menuId?: string;
     exact?: boolean;
+    // 从路径 src/pages 开始, 例如 ./ 就是 src/pages
+    Routes?: string[];
     params?: { [key: string]: any };
     routes?: RouteConfig[];
   }
@@ -20,13 +22,14 @@ declare global {
     isMenu?: boolean;
     component?: string;
     exact?: boolean;
+    // 从路径 src/pages 开始, 例如 ./ 就是 src/pages
+    Routes?: string[];
     routes?: RouteConfig[];
   }
   interface Window
     extends EventTarget,
       WindowSessionStorage,
       WindowLocalStorage,
-      WindowConsole,
       GlobalEventHandlers,
       AnimationFrameProvider,
       WindowOrWorkerGlobalScope,

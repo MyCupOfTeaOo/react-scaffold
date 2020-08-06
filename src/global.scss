@@ -267,6 +267,13 @@ html {
   overflow: hidden;
 }
 
+.ellipsis {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+
 .full-component {
   background-color: $component-background;
   height: 100%;

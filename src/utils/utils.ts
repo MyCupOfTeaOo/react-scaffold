@@ -124,10 +124,13 @@ export function GenSubRoutes(
         routes: subRoutes,
         isMenu: item.isMenu,
         params: p,
+        Routes: item.Routes,
       };
     }
     return {
-      Routes: item.title ? [Title, AuthRoutes] : [AuthRoutes],
+      Routes: item.title
+        ? [Title, AuthRoutes, ...(item.Routes || [])]
+        : [AuthRoutes, ...(item.Routes || [])],
       component: component || NotImplementPage,
       path,
       exact: item.exact ?? !isComponent,
@@ -189,8 +192,8 @@ export function GenRoutes(
             Routes:
               // 全部都是子路由才展示title
               routes.length === subRoutes.length + 2
-                ? [Title, AuthRoutes]
-                : undefined,
+                ? [Title, AuthRoutes, ...(target?.Routes || [])]
+                : target?.Routes,
             component,
             path,
             menuId: item.menuId,
@@ -201,7 +204,7 @@ export function GenRoutes(
         } else {
           return {
             isMenu: item.isMenu ?? target?.isMenu ?? true,
-            Routes: [Title, AuthRoutes],
+            Routes: [Title, AuthRoutes, ...(target?.Routes || [])],
             component,
             path,
             menuId: item.menuId,

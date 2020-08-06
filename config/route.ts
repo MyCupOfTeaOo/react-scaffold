@@ -38,6 +38,10 @@ function push404(elements: IRoute[]): void {
 }
 push404(routes);
 
+function genRouteStr(path: string) {
+  return `require('${[path]}').default`;
+}
+
 function subPagesGen(routes?: RouteConfig[]): string {
   if (Array.isArray(routes)) {
     const temp1 = routes.reduce((memo, item) => {
@@ -53,6 +57,7 @@ function subPagesGen(routes?: RouteConfig[]): string {
         : require('${item.component}').default`
           : undefined
       },
+        Routes: ${item.Routes ? `[${item.Routes.map(genRouteStr)}]` : undefined},
         path: '${item.path}',
         isMenu: ${item.isMenu},
         exact: ${item.exact},
@@ -85,6 +90,7 @@ const pagesStr: string = pages.reduce((memo, page) => {
   : require('${page.component}').default
   `;
   const temp = `{
+    Routes: ${page.Routes ? `[${page.Routes.map(genRouteStr)}]` : undefined},
     component: ${page.component ? componentStr : undefined},
     menuId: '${page.menuId}',
     isMenu: ${page.isMenu},
