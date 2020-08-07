@@ -1,0 +1,15 @@
+@import '@/global';
+
+html {
+  .backdrop {
+    color: $purple-5;
+    z-index: 99;
+    position: absolute;
+  }
+}
+
+.content {
+  margin-right: $small-padding;
+  font-size: 16px;
+  color: $gray-2;
+}
