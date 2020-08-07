@@ -65,6 +65,9 @@
   align-items: center;
   justify-content: center;
   width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 1;
   &:hover {
     background: $gray-7;
   }
