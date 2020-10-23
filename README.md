@@ -39,7 +39,17 @@
 
 > 执行 `npm run release`生成 tag
 > 执行 `npm run build`构建
-> 如有 `sentry` 启用需求,需要在项目下添加 `.sentryclirc` 文件,具体文件格式请参照 `sentry` 官网文档
+> 如有 `sentry` 启用需求,需要在项目下添加 `.sentryclirc` 文件,格式如下:
+
+```toml
+[defaults]
+url = sentry地址
+project = sentry项目名
+org = sentry
+
+[auth]
+token = 授权token
+```
 
 ## 4.1. 构建环境变量
 
