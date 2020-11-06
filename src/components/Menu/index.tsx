@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'umi/link';
 import { Menu as AMenu } from 'antd';
+import { observer } from 'mobx-react';
+import stores from '@/stores';
 import { GRoute } from '@/typings';
 import { isInboundLink } from '@/utils/utils';
 import { getToken } from '@/utils/authority';
@@ -78,6 +80,28 @@ export function getPathAllRoot(path: string): string[] {
     .splice(1);
 }
 
+export function filterNotChildPath(
+  paths: string[],
+  routes: GRoute[],
+): string[] {
+  let node = routes;
+  const nextPaths: string[] = [];
+  for (const path of paths) {
+    const nextNode = node.find(
+      route =>
+        route.path === path &&
+        route.isMenu &&
+        route.routes?.some(item => item.isMenu),
+    )?.routes;
+    if (!nextNode) {
+      break;
+    }
+    node = nextNode;
+    nextPaths.push(path);
+  }
+  return nextPaths;
+}
+
 export function getUrlMap(
   urlMap: { [key: string]: boolean } = {},
   routes?: GRoute<{
@@ -121,22 +145,29 @@ const Menu: React.FC<MenuType> = props => {
     setItem(menuItem(props.routes));
   }, [props.routes]);
   useEffect(() => {
-    setOpenKeys(getPathAllRoot(props.path));
+    setOpenKeys(filterNotChildPath(getPathAllRoot(props.path), props.routes));
     setSelectedKeys([getSelectPath(urlMap, props.path)]);
-  }, [props.path]);
+  }, [props.path, props.routes]);
 
   const onOpenChange = useCallback(
-    (keys: string[]) => {
+    (keys: React.ReactText[]) => {
+      if (stores.global.collapsed) return;
       setOpenKeys(preOpenKeys => {
-        const latestOpenKey = keys.find(
+        const theKeys = keys as string[];
+        const latestOpenKey = theKeys.find(
           key => preOpenKeys.indexOf(key) === -1,
         ) as string;
         if (rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
-          return keys;
+          return theKeys;
         } else {
           return latestOpenKey
-            ? keys
-                .filter(key => latestOpenKey.indexOf(key) !== -1)
+            ? theKeys
+                .filter(
+                  key =>
+                    latestOpenKey.indexOf(key) !== -1 ||
+                    key.indexOf(latestOpenKey) !== -1,
+                )
+                .filter(key => key !== latestOpenKey)
                 .concat([latestOpenKey])
             : [];
         }
@@ -148,18 +179,16 @@ const Menu: React.FC<MenuType> = props => {
     setSelectedKeys(selecteds);
   }, []);
   return (
-    <React.Fragment>
-      <AMenu
-        mode="inline"
-        openKeys={openKeys}
-        selectedKeys={selectedKeys}
-        onSelect={onSelect}
-        onOpenChange={onOpenChange}
-      >
-        {item}
-      </AMenu>
-    </React.Fragment>
+    <AMenu
+      mode="inline"
+      openKeys={openKeys}
+      selectedKeys={selectedKeys}
+      onSelect={onSelect}
+      onOpenChange={onOpenChange}
+    >
+      {!stores.global.collapsed && item}
+    </AMenu>
   );
 };
 
-export default Menu;
+export default observer(Menu);
