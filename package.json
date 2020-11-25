@@ -18,7 +18,8 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.1.0",
-    "@sentry/browser": "^5.15.5",
+    "@sentry/browser": "^5.27.6",
+    "@sentry/tracing": "^5.27.6",
     "ag-grid-community": "^23.0.2",
     "ag-grid-react": "^23.0.3",
     "antd": "^4.2.0",

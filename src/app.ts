@@ -1,5 +1,6 @@
 import ReactGA from 'react-ga';
 import * as Sentry from '@sentry/browser';
+import { Integrations } from '@sentry/tracing';
 import { Location, Route } from '@/typings';
 import { UA, dsn } from '#/projectConfig';
 import commit from './.commit';
@@ -7,6 +8,11 @@ import commit from './.commit';
 if (dsn) {
   Sentry.init({
     dsn,
+    integrations: [new Integrations.BrowserTracing()],
+
+    // We recommend adjusting this value in production, or using tracesSampler
+    // for finer control
+    tracesSampleRate: 1.0,
   });
 }
 
