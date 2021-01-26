@@ -13,15 +13,26 @@ import { RequestData, ResponseData } from 'teaness/es/DataGrid/typings';
 import { CancellablePromise } from 'teaness/es/typings';
 import stores from '@/stores';
 import { RouteProps } from '@/typings';
-import request, { ReqResponse } from '@/utils/request';
+import request, { ReqResponse, extend } from '@/utils/request';
 import { getFileInfo, uploadFile } from '@/service/file';
-import { setToken, getToken } from '@/utils/authority';
+import { setToken, getToken, clearToken } from '@/utils/authority';
+import { stringify } from 'qs';
 import styles from './index.scss';
 import { apiPrefix } from '#/projectConfig';
 
 if (zhCN.Modal) {
   zhCN.Modal.justOkText = '确定';
 }
+
+extend({
+  noPermission() {
+    stores.user.clearUser();
+    clearToken();
+    window.location.href = `/sign/signIn?${stringify({
+      sysId: stores.global.sysId,
+    })}`;
+  },
+});
 
 Modal.defaultProps = {
   ...Modal.defaultProps,

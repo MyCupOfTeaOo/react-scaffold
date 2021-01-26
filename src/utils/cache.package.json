@@ -1,0 +1,12 @@
+{
+  "name": "@qg-util/cache",
+  "version": "0.0.1",
+  "feature": "缓存工具",
+  "description": "用来处理前端缓存",
+  "repository": {
+    "type": "git",
+    "url": "http://192.168.117.144/common/react-component-scaffold/tree/master/src/utils/cache.ts"
+  },
+  "license": "MIT",
+  "dependencies": {}
+}

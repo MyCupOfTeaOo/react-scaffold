@@ -1,0 +1,16 @@
+{
+  "name": "@qg-util/request",
+  "version": "0.0.2",
+  "feature": "请求工具",
+  "description": "用来处理前端请求",
+  "repository": {
+    "type": "git",
+    "url": "http://192.168.117.144/common/react-component-scaffold/tree/master/src/utils/request.ts"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@qg-util/authority": "^0.0.1",
+    "@sentry/browser": "^5.22.3",
+    "axios": "^0.21.1"
+  }
+}

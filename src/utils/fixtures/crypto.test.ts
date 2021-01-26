@@ -1,4 +1,3 @@
-import 'jest';
 import { aes } from '#/projectConfig';
 import { decode, encode, keymap } from '../crypto';
 

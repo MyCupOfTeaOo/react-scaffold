@@ -4,7 +4,7 @@ export default {
   set(key: string, value: {} | string | number): void {
     sessionStorage.setItem(`${prefix || ''}_${key}`, JSON.stringify(value));
   },
-  get(key: string): {} | string | number | undefined {
+  get<T extends any>(key: string): T | undefined {
     const value = sessionStorage.getItem(`${prefix || ''}_${key}`);
     try {
       if (value) return JSON.parse(value);

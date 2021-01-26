@@ -9,14 +9,23 @@ import axios, {
   AxiosResponse,
 } from 'axios';
 import * as Sentry from '@sentry/browser';
-import stores from '@/stores';
-import { stringify } from 'qs';
+import { getToken, clearToken } from '@/utils/authority';
 import { apiPrefix } from '#/projectConfig';
-import { getToken, clearToken } from './authority';
 
-export enum respCode {
+export enum RespCode {
   success = 200,
   cancel = 0,
+}
+
+const behavior = {
+  noPermission() {
+    clearToken();
+    window.location.href = `/sign/signIn`;
+  },
+};
+
+export function extend(obj: typeof behavior) {
+  Object.assign(behavior, obj);
 }
 
 export const codeMessage: { [n: number]: string } = {
@@ -60,11 +69,7 @@ const errorHandler = async (error: {
   const { response, message } = error;
   if (response && response.status) {
     if (response.status === 403) {
-      stores.user.clearUser();
-      clearToken();
-      window.location.href = `/sign/signIn?${stringify({
-        sysId: stores.global.sysId,
-      })}`;
+      behavior.noPermission();
     }
     const errortext =
       response.data?.msg ||
@@ -84,7 +89,7 @@ const errorHandler = async (error: {
   }
   return {
     response,
-    code: respCode.cancel,
+    code: RespCode.cancel,
     msg: message || '',
     isCancel: true,
   };
@@ -204,7 +209,7 @@ coreRequest.interceptors.response.use(response => {
   };
 }, errorHandler);
 coreRequest.interceptors.response.use(response => {
-  if (response.code !== respCode.success) {
+  if (response.code !== RespCode.success) {
     return Promise.reject(Error(response.msg));
   }
   return {
@@ -225,7 +230,7 @@ request.interceptors.response.use(response => {
   return {
     response,
     ...response.data,
-    isSuccess: response.data?.code === respCode.success,
+    isSuccess: response.data?.code === RespCode.success,
   };
 }, errorHandler);
 
@@ -242,12 +247,12 @@ export function download<T = any>(
       const a = document.createElement('a');
       const turl = window.URL.createObjectURL(response.data);
       a.href = turl;
-      a.download = sourceFilename;
+      a.download = decodeURI(sourceFilename);
       a.click();
       window.URL.revokeObjectURL(turl);
       return {
         msg: '下载成功',
-        code: respCode.success,
+        code: RespCode.success,
         isSuccess: true,
         response,
       };

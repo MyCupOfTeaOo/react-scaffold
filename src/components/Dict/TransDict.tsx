@@ -1,159 +1,10 @@
 /* eslint-disable no-nested-ternary */
 import React, { useEffect } from 'react';
-import { observable, flow } from 'mobx';
-import { getCurrentDict, Dict, DictMeta, getDictMeta } from '@/service/config';
-import { ReqResponse } from '@/utils/request';
 import { Circle } from 'teaness';
 import { observer } from 'mobx-react';
 import { splitCode } from './utils';
-
-export interface NodeType {
-  label?: string;
-  state: 'ready' | 'loading' | 'success' | 'error' | 'notFound';
-  father?: NodeType;
-  children: {
-    [key: string]: NodeType;
-  };
-}
-
-export interface NodeMeta {
-  splitLens?: number[];
-  levelNum?: number;
-  label?: string;
-  state: 'ready' | 'loading' | 'success' | 'error' | 'notFound';
-}
-
-export interface CascaderCache {
-  [key: string]: NodeType;
-}
-
-export class Store {
-  @observable
-  cascaderCache: CascaderCache = {};
-
-  @observable
-  metaCache: Record<string, NodeMeta> = {};
-
-  setMetaCache = flow(function*(
-    this: Store,
-    server: string,
-    dictType: string,
-  ): any {
-    if (!this.metaCache[dictType]) {
-      this.metaCache[dictType] = {
-        state: 'ready',
-      };
-    }
-    const curMeta = this.metaCache[dictType];
-    switch (curMeta.state) {
-      case 'loading':
-      case 'notFound':
-      case 'success':
-        break;
-      case 'error':
-      case 'ready':
-      default:
-        // 加载元信息
-        // 失败重复请求三次
-        for (let i = 0; i < 3; i += 1) {
-          curMeta.state = 'loading';
-          const res: ReqResponse<DictMeta> = yield getDictMeta(
-            server,
-            dictType,
-          );
-          if (res.isSuccess) {
-            if (res.data) {
-              Object.assign(curMeta, {
-                state: 'success',
-                label: res.data.label,
-                levelNum: Number(res.data.levelNum),
-                splitLens: res.data.levelCodeLen
-                  ?.split('-')
-                  .map(item => parseInt(item, 10)) || [0xffffff],
-              } as NodeMeta);
-            } else {
-              curMeta.state = 'notFound';
-            }
-          } else {
-            console.error(res.msg);
-          }
-        }
-    }
-  });
-
-  setCacheByDictTypeAndDictCode = flow(function*(
-    this: Store,
-    server: string,
-    dictType: string,
-    codes: string[],
-    searchFather?: boolean,
-  ): any {
-    if (!this.cascaderCache[dictType]) {
-      this.cascaderCache[dictType] = {
-        state: 'ready',
-        children: {},
-      };
-    }
-    const typeNode = this.cascaderCache[dictType];
-
-    let node: NodeType = typeNode;
-    let index = 1;
-    for (const code of codes) {
-      if (!node.children[code]) {
-        node.children[code] = {
-          state: 'ready',
-          children: {},
-          father: node,
-        };
-      }
-      const curNode = node.children[code];
-      switch (curNode.state) {
-        case 'loading':
-        case 'notFound':
-        case 'success':
-          break;
-        case 'error':
-        case 'ready':
-        default:
-          // 加载当前节点 || 需要加载父节点
-          if (index === codes.length || searchFather) {
-            // 加载当前节点
-            // 失败重复请求三次
-            for (let i = 0; i < 3; i += 1) {
-              curNode.state = 'loading';
-              const resp: ReqResponse<Dict> = yield getCurrentDict(
-                server,
-                dictType,
-                codes.slice(0, index).join(''),
-              );
-              if (resp.isSuccess) {
-                if (!resp.data) {
-                  curNode.state = 'notFound';
-                } else {
-                  curNode.state = 'success';
-                  curNode.label = resp.data.label;
-                }
-                // 中断循环
-                break;
-              } else {
-                console.error(resp.msg);
-              }
-            }
-            // 加载失败
-            if (curNode.state === 'loading') {
-              curNode.state = 'error';
-            }
-          }
-
-          break;
-      }
-      node = node.children[code];
-      index += 1;
-    }
-  });
-}
-const store = new Store();
-export { store };
+import { NodeMeta, NodeType } from './interface';
+import { store } from './store';
 
 export function getTarget(
   code?: string,
@@ -330,7 +181,7 @@ const TransDict: React.FC<TransDictProps> = props => {
                 )
                 .join(props.separator)
           : props.notFound || props.code;
-      if (props.notDiv) return <React.Fragment>{element}</React.Fragment>;
+      if (props.notDiv) return <>{element}</>;
       return <span>{element}</span>;
     }
   }

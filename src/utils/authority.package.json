@@ -1,0 +1,14 @@
+{
+  "name": "@qg-util/authority",
+  "version": "0.0.1",
+  "feature": "权限工具",
+  "description": "用来处理前端权限",
+  "repository": {
+    "type": "git",
+    "url": "http://192.168.117.144/common/react-component-scaffold/tree/master/src/utils/authority.ts"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@qg-util/cache": "^0.0.1"
+  }
+}

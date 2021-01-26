@@ -6,11 +6,15 @@ import {
   CascaderOptionType,
   CascaderValueType,
 } from 'antd/lib/cascader';
-import { getChildDict, Dict } from '@/service/config';
+import { getChildDict } from './service';
 import { splitCode } from './utils';
+import { Dict } from './interface';
 
 export interface DictSelectProps
   extends Omit<CascaderProps, 'options' | 'value' | 'onChange'> {
+  /**
+   * 待选项
+   */
   options?: CascaderOptionType[];
   value?: string;
   onChange?(value?: string, options?: CascaderOptionType[]): void;
@@ -38,6 +42,9 @@ export function dealWithDict(
         ? dict.children?.map(item => dealWithDict(item, curDepth + 1, maxDepth))
         : undefined,
   };
+  if (!options.children?.length) {
+    options.children = undefined;
+  }
   return options;
 }
 
@@ -58,7 +65,7 @@ const DictSelect: React.FC<DictSelectProps> = ({
       isChange.value = true;
       onChange?.(v.join(''), option);
     },
-    [],
+    [onChange],
   );
   const splitValue = useMemo<string[] | undefined>(() => {
     if (value && splitlens.value) {
@@ -141,7 +148,6 @@ const Test: React.FC<any> = () => {
     </div>
   );
 };
-
 
  * 该hook可以节约请求资源(当页面有多个相同的Dict时),所以不要担心资源重复加载问题
  * @param server 服务名

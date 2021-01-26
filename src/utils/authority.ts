@@ -1,4 +1,4 @@
-import cache from './cache';
+import cache from '@/utils/cache';
 
 export function getToken(): string | undefined {
   return <string>cache.getLocalCache('token');

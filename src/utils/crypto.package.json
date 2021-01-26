@@ -1,0 +1,16 @@
+{
+  "name": "@qg-util/crypto",
+  "version": "0.0.1",
+  "feature": "数据加密",
+  "description": "用来处理数据的加密与解密",
+  "repository": {
+    "type": "git",
+    "url": "http://192.168.117.144/common/react-component-scaffold/tree/master/src/utils/crypto.ts"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@types/crypto-js": "^3.1.44",
+    "crypto-js": "^4.0.0",
+    "lodash": "^4.17.20"
+  }
+}
