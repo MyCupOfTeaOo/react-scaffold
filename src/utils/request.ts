@@ -212,9 +212,7 @@ coreRequest.interceptors.response.use(response => {
   if (response.code !== RespCode.success) {
     return Promise.reject(Error(response.msg));
   }
-  return {
-    ...response.data,
-  };
+  return response;
 });
 
 request.interceptors.request.use(config => {
