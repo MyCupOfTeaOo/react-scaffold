@@ -18,7 +18,8 @@ export enum RespCode {
 }
 
 const behavior = {
-  noPermission() {
+  // eslint-disable-next-line
+  noPermission(response: AxiosResponse) {
     clearToken();
     window.location.href = `/sign/signIn`;
   },
@@ -69,7 +70,7 @@ const errorHandler = async (error: {
   const { response, message } = error;
   if (response && response.status) {
     if (response.status === 403) {
-      behavior.noPermission();
+      behavior.noPermission(response);
     }
     const errortext =
       response.data?.msg ||
@@ -238,9 +239,15 @@ export function download<T = any>(
 ): ReqResponse<T> {
   const disposition = (response.headers as any)['content-disposition'];
   if (disposition) {
-    const sourceFilename =
+    let sourceFilename =
       /filename=(?<filename>[^;]+)/.exec(disposition)?.groups?.filename ||
       filename;
+    if (sourceFilename?.startsWith(`"`)) {
+      sourceFilename = sourceFilename.slice(1);
+    }
+    if (sourceFilename?.endsWith(`"`)) {
+      sourceFilename = sourceFilename.slice(0, sourceFilename.length - 1);
+    }
     if (sourceFilename) {
       const a = document.createElement('a');
       const turl = window.URL.createObjectURL(response.data);
@@ -269,6 +276,50 @@ export function download<T = any>(
       response,
     };
   }
+}
+
+export type GetResponseDataType<
+  T extends Promise<ReqResponse<any>>
+> = T extends Promise<ReqResponse<infer R>> ? R : any;
+
+export type GetResponseType<
+  T extends Promise<ReqResponse<any>>
+> = T extends Promise<infer R> ? R : any;
+
+export function transPureFetch<
+  R extends Promise<ReqResponse<any>>,
+  P extends any[]
+>(
+  fetchMethod: (...args: P) => R,
+): (...args: P) => Promise<GetResponseDataType<R>> {
+  return (...args: P) =>
+    fetchMethod(...args).then(res => {
+      if (res.isSuccess) {
+        return res.data;
+      } else if (res.isCancel) {
+        return Promise.reject(new Error(res.msg || '操作取消'));
+      } else {
+        return Promise.reject(new Error(res.msg));
+      }
+    });
+}
+
+export function transPureFetchIgnoreKey<
+  R extends Promise<ReqResponse<any>>,
+  P extends any[]
+>(
+  fetchMethod: (...args: P) => R,
+): (key: string, ...args: P) => Promise<GetResponseDataType<R>> {
+  return (key: string, ...args: P) =>
+    fetchMethod(...args).then(res => {
+      if (res.isSuccess) {
+        return res.data;
+      } else if (res.isCancel) {
+        return Promise.reject(new Error(res.msg || '操作取消'));
+      } else {
+        return Promise.reject(new Error(res.msg));
+      }
+    });
 }
 
 export default request;
