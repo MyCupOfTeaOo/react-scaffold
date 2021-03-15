@@ -96,10 +96,22 @@ const errorHandler = async (error: {
   };
 };
 
+function getBaseUrl(path?: string) {
+  if (path?.charAt(0) === '/') {
+    return path;
+  }
+  if (path?.startsWith('http://') || path?.startsWith('https://')) {
+    return path;
+  }
+  if (path) {
+    return `/${path}`;
+  }
+}
+
 type MyResponse<T = any> = T;
 
 const request = axios.create({
-  baseURL: `/${apiPrefix || ''}`,
+  baseURL: getBaseUrl(apiPrefix),
 }) as {
   (config: AxiosRequestConfig): AxiosPromise;
   (url: string, config?: AxiosRequestConfig): AxiosPromise;
